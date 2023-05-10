@@ -7,9 +7,11 @@
   - [Development Architecture](#development-architecture)
 - [Virtualisation](#virtualisation)
   - [Virtual Machines](#virtual-machines)
-  - [Vagrant](#vagrant)
+    - [Vagrant](#vagrant)
     - [Vagrant Commands](#vagrant-commands)
     - [Vagrant Web Server SetUp](#vagrant-web-server-setup)
+  - [Linux](#linux)
+    - [Linux Commands (Bash)](#linux-commands-(bash))
 
 
 # DevOps Fundamentals
@@ -61,7 +63,7 @@ What makes a good Development Environment?
 
 # Virtualisation
 ## Virtual Machines
-
+A virtual machine is a software environment that emulates a physical machine, allowing multiple operating systems to run on a single physical machine. It enables users to run different operating systems and software applications on the same computer simultaneously, increasing flexibility, and reducing hardware costs.
 #
 ## Vagrant
 Vagrant is a tool used for building and managing virtual machine environments in a single workflow. It is easy to use and focuses on automation. 
@@ -72,7 +74,6 @@ Vagrant is a tool used for building and managing virtual machine environments in
 Note: vscode Bash Terminal is used until Vagrant initialises.
 
 Note: This means up until vagrant ssh.
-
 
  `vagrant init` -  Used to get the Vagrant file
 
@@ -123,9 +124,85 @@ end
 ```
 Restart the VM to apply changes using `vagrant reload` 
 
+You can add to the vagrant file to automate this installation: 
 
+```
+Vagrant.configure("2") do |config|
+  
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.network "private_network", ip:"192.168.10.100"
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update
+    sudo apt-get install -y nginx
+  SHELL
+end
+```
 
+### Kernel vs Shell
 
+![Alt text](Images/VM%20fundamentals.PNG)
+
+## Linux
+
+### Linux Commands
+Everything in Linux is a "file"
+
+`touch` to add a file
+`touch example.txt`
+
+`file` to check the file
+`file example.txt`
+
+`mkdir` to make a folder 
+`mkdir "my txt"`
+
+`mv` To rename 
+`mv example.txt example.jpg`This file is actually still a txt filedespite it being named example.jpeg now
+
+`rm` To remove
+`rm -rf example.txt` To force remove
+
+`mkdir .hidden_directory` The . is what makes the folder hidden
+
+`ls` To view what files there are
+
+`ls -a` To view ALL
+
+### Linux Permissions: 
+`r` - Read
+
+`w` - Write
+
+`x` - Execute
+
+There are three different permitants:
+1. Owner (-rw)
+2. Group (rw-)
+3. All users (r--)
+
+-rw-rw-r--
+
+`chmod u+x example.txt`
+this gives execute permissions to owner.
+
+`chmod g+x example.txt` 
+this gives execute permissions to group.
+
+`chmod g-x example.txt`
+this removes those permissions.
+
+You can also use numbers:
+
+`sudo chmod 777 example.txt`
+This gives all permissions to everyone.
+
+Cheat sheet: https://chmod-calculator.com/
+
+### There are different editors to edit files: 
+
+- `nano`
+
+`sudo nano example.txt`
 
 
 
