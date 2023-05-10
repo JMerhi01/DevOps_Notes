@@ -2,14 +2,14 @@
 
 - [Table of Contents](#table-of-contents)
 - [DevOps Fundamentals](#devops-fundamentals)
-  - [What is DevOps?](what-is-devops?)
-  - [Software Development Life Cycle (SDLC)](software-development-life-cycle-(SDLC))
-  - [Development Architecture](development-architecture)
-- [Virtualisation](virtualisation)
-  - [Virtual Machines](virtual-machines)
-  - [Vagrant](Vagrant)
-    - [Vagrant Commands](vagrant_commands)
-    - [Vagrant Web Server SetUp](vagrant-web-server-setup)
+  - [What is DevOps?](#what-is-devops?)
+  - [Software Development Life Cycle (SDLC)](#software-development-life-cycle-(SDLC))
+  - [Development Architecture](#development-architecture)
+- [Virtualisation](#virtualisation)
+  - [Virtual Machines](#virtual-machines)
+  - [Vagrant](#vagrant)
+    - [Vagrant Commands](#vagrant-commands)
+    - [Vagrant Web Server SetUp](#vagrant-web-server-setup)
 
 
 # DevOps Fundamentals
@@ -47,8 +47,8 @@ DevOps emphasizes communication, collaboration, integration, automation, and tra
 **Microservices**
 - Modern software architecture
 - Collection of small, independent services that work together and communicate via APIs
+![Alt text](Images/architecture.png)
 
-![Alt text](architecture.png)
 #
 ### **The Development Environment**
 
