@@ -25,6 +25,7 @@
     - [Nano Commands](#nano-commands)
     - [Bash Scripting (Shebang)](#bash-scripting-shebang)
   - [Integrating Dev Code](#integrating-dev-code)
+    - [Set up the Vagrant VM](#set-up-the-vagrant-vm)
     - [Finding Dependencies with Ruby](#finding-dependencies-with-ruby)
     - [NodeJS and NPM in the APP VM](#nodejs-and-npm-in-the-app-vm)
 
