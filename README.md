@@ -3,7 +3,7 @@
 - [Table of Contents](#table-of-contents)
 - [DevOps Fundamentals](#devops-fundamentals)
   - [What is DevOps?](#what-is-devops?)
-  - [Software Development Life Cycle (SDLC)](#software-development-life-cycle-(SDLC))
+  - [The Software Development Life Cycle (SDLC):](#the-software-development-life-cycle-sdlc)
   - [Development Architecture](#development-architecture)
 - [Virtualisation](#virtualisation)
   - [Virtual Machines](#virtual-machines)
@@ -21,9 +21,44 @@ DevOps is a collaborative approach to software development that combines develop
 DevOps emphasizes communication, collaboration, integration, automation, and transparency among developers and IT operations to improve the speed and quality of software delivery.
 
 ![Alt text](Images/dev%20cycle.png)
+#
+## The Software Development Life Cycle (SDLC):
+
+### ***First Phase:***
+### 1. Defining the Objective
+
+- This stage involves understanding and documenting the problem that the software is meant to solve.
+- Stakeholders, such as customers, end users, or business analysts, provide input to clarify the software's purpose and main features.
+
+### 2. Planning Stage
+
+- The project's scope, resources, timeline, and potential risks are identified and outlined.
+- This phase sets the groundwork for the rest of the project and helps avoid future delays and cost overruns.
+
+### 3. Design Stage
+
+- Based on the objectives and plan, a detailed software design is created, specifying how the software will function and how its components will interact.
+- This design acts as a blueprint for the next stages of development, guiding the coding process.
+
+### **Second Phase**
+
+### 4. Coding Stage
+
+- In this phase, developers translate the design into code, creating the actual software.
+- Each part of the software is coded according to the design specifications, and all components are integrated.
+
+### 5. Testing Stage
+
+- Once the code is complete, it's thoroughly tested to identify and fix any bugs or errors.
+- Different types of testing are performed to ensure the software works as intended and meets the defined objectives.
+
+### 6. Deployment Stage
+
+- After testing, the software is deployed to the production environment where it's available for end users.
+- This stage also includes ongoing maintenance to correct issues, add new features, and ensure the software continues to meet user needs.
 
 #
-### **Four Pillars of DevOps**
+## **Four Pillars of DevOps**
 
 - Ease of use: Making tools easy to use for other teams, user friendly!
 
@@ -36,7 +71,7 @@ DevOps emphasizes communication, collaboration, integration, automation, and tra
 
 ![Alt text](Images/4%20pillars.png)
 #
-### **Monolith, Two-Tier and Microservices Architecture**
+### **Development Architecture**
 
 **Monolith**
 - Traditional software architecture
@@ -49,19 +84,11 @@ DevOps emphasizes communication, collaboration, integration, automation, and tra
 **Microservices**
 - Modern software architecture
 - Collection of small, independent services that work together and communicate via APIs
+
 ![Alt text](Images/architecture.png)
 
-#
-### **The Development Environment**
-
-What makes a good Development Environment?
-- User friendly, fast and robust. 
-- Easy to update.
-- Dev Environment should match Production Environment for bug fixes. 
-- Environments should be the same for all, bugs and fixes should match.  
-- Focussed on one application. 
-
 # Virtualisation
+
 ## Virtual Machines
 A virtual machine is a software environment that emulates a physical machine, allowing multiple operating systems to run on a single physical machine. It enables users to run different operating systems and software applications on the same computer simultaneously, increasing flexibility, and reducing hardware costs.
 #
@@ -75,7 +102,7 @@ Note: vscode Bash Terminal is used until Vagrant initialises.
 
 Note: This means up until vagrant ssh.
 
- `vagrant init` -  Used to get the Vagrant file
+ - `vagrant init` -  Used to get the Vagrant file
 
 Example:
 ~~~
@@ -83,11 +110,11 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64" 
 end
 ~~~
-`vagrant up` - Used to initiate the instructions in the Vagrant file
+- `vagrant up` - Used to initiate the instructions in the Vagrant file
 
-`vagrant ssh` - SSH is the protocol to access the VM
+- `vagrant ssh` - SSH is the protocol to access the VM
 
-`sudo` - Gives admin rights
+- `sudo` - Gives admin rights
 
 <!-- `apt-get` - Apt is the package manager
 
@@ -95,24 +122,24 @@ end
 
 `upgrade` - Install these packages -->
 
-` sudo apt-get update` - Uses apt pack manager to download updates
+- ` sudo apt-get update` - Uses apt pack manager to download updates
 
-` sudo apt-get upgrade` - Uses apt pack manager to install updates
+- ` sudo apt-get upgrade` - Uses apt pack manager to install updates
 
-` vagrant reload` - Restarts the VM using any new config
+- ` vagrant reload` - Restarts the VM using any new config
 
-`vagrant destroy` - Used to shut-down and delete the VM
+- `vagrant destroy` - Used to shut-down and delete the VM
 
-`"ctrl c" or "q"` if locked out of terminal 
+- `"ctrl c" or "q"` if locked out of terminal 
 # 
 ### Vagrant Web Server SetUp
 #### Setup Process: 
 
-`sudo apt-get install nginx -y` - Installs nginx
+- `sudo apt-get install nginx -y` - Installs nginx
 
-`sudo systemctl start nginx` - Starts nginx
+- `sudo systemctl start nginx` - Starts nginx
 
-`sudo systemtcl status nginx` - Checks status of nginx
+- `sudo systemtcl status nginx` - Checks status of nginx
 
 #### Add an IP address to the instructions:
 Example
@@ -147,20 +174,30 @@ end
 ### Linux Commands
 Everything in Linux is a "file"
 
+- `uname` / `uname -a` for machine info
+- `pwd` for current working directory
+- `mkdir <"my text">` to make a directory
+- `mkdir <".my text">` to make a hidden directory
+- `ls` / `ls -a` to list directories and files
+- `cd <dir-name>` to navigate to a directory
+- `nano <filename>` to create, or access a file 
+- `cat <filename>` to view the contents of a file
+- `rm -rf <filename>` to remove a file
+- `mv <filename> <newname>` to remove a file
+- `cp <filename> <desintation`> to copy a file
+
 `touch` to add a file
 `touch example.txt`
 
 `file` to check the file
 `file example.txt`
 
-`mkdir` to make a folder 
-`mkdir "my txt"`
 
-`mv` To rename 
-`mv example.txt example.jpg`This file is actually still a txt filedespite it being named example.jpeg now
 
-`rm` To remove
-`rm -rf example.txt` To force remove
+
+
+
+
 
 `mkdir .hidden_directory` The . is what makes the folder hidden
 
