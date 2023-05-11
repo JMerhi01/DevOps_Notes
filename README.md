@@ -6,12 +6,18 @@
   - [The Software Development Life Cycle (SDLC):](#the-software-development-life-cycle-sdlc)
   - [Development Architecture](#development-architecture)
 - [Virtualisation](#virtualisation)
+  - [Kernel vs Shell](#kernel-vs-shell)
   - [Virtual Machines](#virtual-machines)
     - [Vagrant](#vagrant)
     - [Vagrant Commands](#vagrant-commands)
-    - [Vagrant Web Server SetUp](#vagrant-web-server-setup)
+    - [Bash Scripting (Shebang)](#bash-scripting-shebang)
+  - [NGINX](#nginx-deployment-with-vagrant)
+    - [NGINX Setup](#nginx-setup) 
+    - [NGINX Reverse Proxy](#nginx-reverse-proxy)
   - [Linux](#linux)
-    - [Linux Commands (Bash)](#linux-commands-(bash))
+    - [Linux Commands](#linux-commands)
+    - [Linux Permissions](#linux-permissions)
+    - [Nano Commands](#nano-commands)
 
 
 # DevOps Fundamentals
@@ -88,39 +94,54 @@ DevOps emphasizes communication, collaboration, integration, automation, and tra
 ![Alt text](Images/architecture.png)
 
 # Virtualisation
+## Kernel vs Shell
+
+![Alt text](Images/VM%20fundamentals.PNG)
 
 ## Virtual Machines
 A virtual machine is a software environment that emulates a physical machine, allowing multiple operating systems to run on a single physical machine. It enables users to run different operating systems and software applications on the same computer simultaneously, increasing flexibility, and reducing hardware costs.
+
+
 #
-## Vagrant
-Vagrant is a tool used for building and managing virtual machine environments in a single workflow. It is easy to use and focuses on automation. 
+### Vagrant
+Vagrant is a tool used for building and managing virtual machine environments in a single workflow. It is easy to use and focuses on automation.
 
 ![Alt text](Images/vagrant.png)
 
-### Vagrant Commands
-Note: vscode Bash Terminal is used until Vagrant initialises.
+After using `vagrant init` you get a vagrant file which uses Ruby. 
 
-Note: This means up until vagrant ssh.
-
- - `vagrant init` -  Used to get the Vagrant file
-
-Example:
+Example: 
 ~~~
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64" 
 end
 ~~~
+You can add to it to configure your VM however you like
+
+Example:
+
+```
+Vagrant.configure("2") do |config|
+ config.vm.box = "ubuntu/xenial64" 
+	config.vm.network "private_network", ip:"192.168.10.100"`
+end
+```
+- `"ubuntu/xenial64"` is the OS
+- `"private_network"` is the network type
+
+#
+### Vagrant Commands
+Note: Bash Terminal is used until Vagrant initialises.
+
+Note: This means up until vagrant ssh.
+
+- `vagrant init` -  Used to get the Vagrant file
+
 - `vagrant up` - Used to initiate the instructions in the Vagrant file
 
 - `vagrant ssh` - SSH is the protocol to access the VM
 
 - `sudo` - Gives admin rights
-
-<!-- `apt-get` - Apt is the package manager
-
-`update` - Download these packages
-
-`upgrade` - Install these packages -->
 
 - ` sudo apt-get update` - Uses apt pack manager to download updates
 
@@ -131,25 +152,24 @@ end
 - `vagrant destroy` - Used to shut-down and delete the VM
 
 - `"ctrl c" or "q"` if locked out of terminal 
-# 
-### Nginx Deployment with Vagrant
-#### Setup Process: 
+
+### Bash Scripting (Shebang)
+
+< instructs the OS on which interpeter to run >
+
+.sh = shell extension
+
+`#!/bin/bash` to say what type of shell we are using.
+
+#
+## NGINX
+### NGINX Setup: 
 
 - `sudo apt-get install nginx -y` - Installs nginx
 
 - `sudo systemctl start nginx` - Starts nginx
 
 - `sudo systemtcl status nginx` - Checks status of nginx
-
-#### Add an IP address to the instructions:
-Example
-```
-Vagrant.configure("2") do |config|
- config.vm.box = "ubuntu/xenial64" 
-	config.vm.network "private_network", ip:"192.168.10.100"`
-end
-```
-Restart the VM to apply changes using `vagrant reload` 
 
 You can add to the vagrant file to automate this installation: 
 
@@ -165,13 +185,34 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-### Kernel vs Shell
+OR
 
-![Alt text](Images/VM%20fundamentals.PNG)
+You can make a provision.sh file to run a seperate script:
 
+provision.sh
+```
+#!/bin/bash`
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install nginx -y
+sudo systemctl start nginx 
+```
+Then make the vagrant file link to this script.
+```
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.network "private_network", ip:"192.168.10.100"
+  config.vm.provision "shell", path: "provision.sh"
+end
+```
+#
+### NGINX Reverse Proxy
+k
+
+#
 ## Linux
 
-### Linux Commands
+### Linux Commands:
 Everything in Linux is a "file"
 
 - `uname` / `uname -a` for machine info
@@ -184,12 +225,14 @@ Everything in Linux is a "file"
 - `file <filename>` to check the file
 - `nano <filename>` to access a file 
 - `cat <filename>` to view the contents of a file
+- `head/tail <-line#> <filename>` to view lines from bottom or top of file
 - `rm -rf <filename>` to remove a file
 - `mv <filename> <newname>` to remove a file
 - `cp <filename> <desintation`> to copy a file
-- `top` to list all running processes
+- `top` to list all running processes in real time
 - `ps aux` to view all running processes
 - `sudo kill <id-from-ps-aux>` to kill a process
+- `sudo kill -9 <id-from-ps-aux>` to REALLY kill a process
 - `screen`
 - `ssh-keygen -t rsa -b 4096` to generate a key pair
 - `apt-get install/remove/update/upgrade <package name>` to install packages
@@ -197,15 +240,11 @@ Everything in Linux is a "file"
 - `sudo` super user do, grants admin privileges
 - `su` substitute user, to change user
 - `ctrl + c` to return to terminal
+- `|` this is "pipe" you can use it to combine commands e.g `head | tail`
 
-### Nano Commands
-
-- `nano <filename>` to enter a file
-- `ctrl s` to save
-- `ctrl x` to exit
-- `ctrl O` to writeout 
-
+#
 ### Linux Permissions: 
+
 `r` - Read
 
 `w` - Write
@@ -234,8 +273,13 @@ You can also use numbers:
 This gives all permissions to everyone.
 
 Cheat sheet: https://chmod-calculator.com/
+#
+### Nano Commands:
 
-
+- `nano <filename>` to enter a file
+- `ctrl s` to save
+- `ctrl x` to exit
+- `ctrl O` to writeout 
 
 
 
