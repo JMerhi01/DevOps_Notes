@@ -132,7 +132,7 @@ end
 
 - `"ctrl c" or "q"` if locked out of terminal 
 # 
-### Vagrant Web Server SetUp
+### Nginx Deployment with Vagrant
 #### Setup Process: 
 
 - `sudo apt-get install nginx -y` - Installs nginx
@@ -180,30 +180,30 @@ Everything in Linux is a "file"
 - `mkdir <".my text">` to make a hidden directory
 - `ls` / `ls -a` to list directories and files
 - `cd <dir-name>` to navigate to a directory
-- `nano <filename>` to create, or access a file 
+- `touch <filename>` to create a file
+- `file <filename>` to check the file
+- `nano <filename>` to access a file 
 - `cat <filename>` to view the contents of a file
 - `rm -rf <filename>` to remove a file
 - `mv <filename> <newname>` to remove a file
 - `cp <filename> <desintation`> to copy a file
+- `top` to list all running processes
+- `ps aux` to view all running processes
+- `sudo kill <id-from-ps-aux>` to kill a process
+- `screen`
+- `ssh-keygen -t rsa -b 4096` to generate a key pair
+- `apt-get install/remove/update/upgrade <package name>` to install packages
+- `systemctl status/restart/start/stop <pkg name>` to interact with OS and package
+- `sudo` super user do, grants admin privileges
+- `su` substitute user, to change user
+- `ctrl + c` to return to terminal
 
-`touch` to add a file
-`touch example.txt`
+### Nano Commands
 
-`file` to check the file
-`file example.txt`
-
-
-
-
-
-
-
-
-`mkdir .hidden_directory` The . is what makes the folder hidden
-
-`ls` To view what files there are
-
-`ls -a` To view ALL
+- `nano <filename>` to enter a file
+- `ctrl s` to save
+- `ctrl x` to exit
+- `ctrl O` to writeout 
 
 ### Linux Permissions: 
 `r` - Read
@@ -235,11 +235,7 @@ This gives all permissions to everyone.
 
 Cheat sheet: https://chmod-calculator.com/
 
-### There are different editors to edit files: 
 
-- `nano`
-
-`sudo nano example.txt`
 
 
 
