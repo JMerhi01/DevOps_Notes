@@ -10,7 +10,6 @@
   - [Virtual Machines](#virtual-machines)
     - [Vagrant](#vagrant)
     - [Vagrant Commands](#vagrant-commands)
-    - [Bash Scripting (Shebang)](#bash-scripting-shebang)
   - [NGINX](#nginx-deployment-with-vagrant)
     - [NGINX Setup](#nginx-setup) 
     - [NGINX Reverse Proxy](#nginx-reverse-proxy)
@@ -18,6 +17,7 @@
     - [Linux Commands](#linux-commands)
     - [Linux Permissions](#linux-permissions)
     - [Nano Commands](#nano-commands)
+    - [Bash Scripting (Shebang)](#bash-scripting-shebang)
 
 
 # DevOps Fundamentals
@@ -93,6 +93,94 @@ DevOps emphasizes communication, collaboration, integration, automation, and tra
 
 ![Alt text](Images/architecture.png)
 
+# Git and Github
+
+Git is all about **version control!**
+
+Version control is used to:
+- Remember version updates
+- Provide a history of all changes
+- Ability to go back to an earlier version
+- Provides off-site copy with sync to local
+
+Git bash is the command-line user interface
+Git starts with the _Working Directory_, everything you want to have uploaded is opted in to the _Staging Area_ using `git add`. Things that are moved from the _Staging Area_ in to the _Local Repository_  using `git commit` is what makes versions.
+
+![Alt text](Images/Git.png)
+#
+## Git Setup
+After Installation from: https://rubyinstaller.org/downloads/
+
+To set a ID (username)
+- `git config --global [user.name](http://user.name/) "Jaafar Merhi"`
+
+To assign that ID an email
+- `git config --global user.email "[jmerhi@spartaglobal.com](mailto:jmerhi@spartaglobal.com)"`
+
+To see configurations:
+- `git config --list`
+
+Setting default branch as main: 
+- `git config --global init.defaultbranch main`
+
+There are three levels of configuration settings: 
+- Global
+- System
+- Local
+
+### Creating a Git Repo
+1. Use `mkdir <foldername>` to create a new directory
+2. Use `cd` to navigate to that directory
+3. Use `git init` to create a new repository
+4. Use `notepad README.md` to create a README file
+5. Use `notepad .gitignore` to create a gitignore file
+
+Example of a gitignore file:
+```
+/.vagrant
+/examplefile
+/examplefolder
+/provision.sh
+```
+All files or folders stated in the above file will be excluded by git.
+
+### Copying Local Repo to Github
+1. Make sure there is no sensitive information by using `ls -la`
+2. Create an empty repo on Github
+3. Copy the Github repo link e.g `https://github.com/JMerhi01/GitFundamentals.git`
+4. In gitbash, use `git remote add origin <githublink>`
+5. `add` and `commit` the files you would like to push
+6. Use `git push origin main` to push files to github
+
+When pushing, you will either need to log-in or insert a token for access.
+
+### Copying Github Repo to Local
+1. Make the repo on Github
+2. Copy the Github repo link e.g `https://github.com/JMerhi01/GitFundamentals.git`
+3. Use `git clone <githublink>`
+
+## Git Commands
+
+- `clear` - clear space
+- `pwd` - print working directory (where im located)
+- `mkdir <foldername>` - create a new directory
+- `cd <foldername>`- to change in to that directory
+- `ls` -  List files 
+- `ls -al` - List files with more detail
+- `git init` - creates a new repository 
+- `git add` - moves files from **Working Directory** to **Staging Area.**
+- `git add .`- moves ALL files from **Working Directory** to **Staging Area.**
+- `git commit` - moves files from **Staging Area** to **Local Repository.**
+- `git commit -m <"description">` - moves files from **Staging Area** to **Local Repository.**
+- `cd ..` - to move back one level in your directories
+- `git rm <file>` - to delete a file
+- `git log` - to see the history of the changes
+- `git clone` - to clone a repo from git hub to local
+- `git` - to push the changes to github
+- `git diff` - to see changes made
+- `git status` - to see what stage each file is in
+- `notepad <filename>` - to create or open a notepad file
+
 # Virtualisation
 ## Kernel vs Shell
 
@@ -153,13 +241,7 @@ Note: This means up until vagrant ssh.
 
 - `"ctrl c" or "q"` if locked out of terminal 
 
-### Bash Scripting (Shebang)
 
-< instructs the OS on which interpeter to run >
-
-.sh = shell extension
-
-`#!/bin/bash` to say what type of shell we are using.
 
 #
 ## NGINX
@@ -281,7 +363,13 @@ Cheat sheet: https://chmod-calculator.com/
 - `ctrl x` to exit
 - `ctrl O` to writeout 
 
+### Bash Scripting (Shebang)
 
+< instructs the OS on which interpeter to run >
+
+.sh = shell extension
+
+`#!/bin/bash` to say what type of shell we are using.
 
 
 
