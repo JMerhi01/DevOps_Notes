@@ -24,6 +24,9 @@
     - [Linux Permissions](#linux-permissions)
     - [Nano Commands](#nano-commands)
     - [Bash Scripting (Shebang)](#bash-scripting-shebang)
+  - [Integrating Dev Code](#integrating-dev-code)
+    - [Finding Dependencies with Ruby](#finding-dependencies-with-ruby)
+    - [NodeJS and NPM in the APP VM](#nodejs-and-npm-in-the-app-vm)
 
 
 # DevOps Fundamentals
@@ -287,13 +290,17 @@ sudo systemctl start nginx
 ```
 Then make the vagrant file link to this script.
 ```
+
 Vagrant.configure("2") do |config|
+  # configures the VM settings
   config.vm.box = "ubuntu/xenial64"
   config.vm.network "private_network", ip:"192.168.10.100"
+
+  # provision the VM to have Nginx
   config.vm.provision "shell", path: "provision.sh"
 end
 ```
-#
+
 ### NGINX Reverse Proxy
 k
 
@@ -368,7 +375,7 @@ Cheat sheet: https://chmod-calculator.com/
 - `ctrl s` to save
 - `ctrl x` to exit
 - `ctrl O` to writeout 
-
+#
 ### Bash Scripting (Shebang)
 
 < instructs the OS on which interpeter to run >
@@ -376,6 +383,72 @@ Cheat sheet: https://chmod-calculator.com/
 .sh = shell extension
 
 `#!/bin/bash` to say what type of shell we are using.
+#
+## Integrating Dev Code
 
+![Alt text](Images/App%20Dev%20folders.PNG)
 
+vagrantfile
+``` 
+Vagrant.configure("2") do |config|
+
+  # configures the VM settings
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.network "private_network", ip:"192.168.10.100"
+
+  # provision the VM to have Nginx
+  config.vm.provision "shell", path: "provision.sh"
+
+  # put the app folder from our local machine to the VM
+  config.vm.synced_folder "app", "/home/vagrant/app"
+end
+
+```
+provision.sh
+```
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install nginx -y
+sudo systemctl start nginx 
+```
+#
+### Set up the Vagrant VM
+
+1. Navigate to the directory containing your Vagrant configuration file (`Vagrantfile`) in your terminal.
+2. Run `vagrant up` to start the VM. This command reads the `vagrantfile` in the current directory and provisions the VM accordingly.
+3. Use `vagrant ssh` to log into the VM.
+4. Change to the OUTSIDE app directory using `cd ..`.
+5. Use `ls` to verify the contents of the app directory.
+![Alt text](Images/ls%20outside%20app.PNG)
+#
+### Finding Dependencies with Ruby
+
+1. Change to the "environment" directory with `cd environment`.
+2. List the contents of the current directory to view the available files and directories with `ls`.
+3. Change to the "spec-tests" directory with `cd spec-tests`.
+4. Install Bundler, a Ruby gem manager, with `gem install bundler`.
+5. Install the dependencies specified in the `Gemfile` using Bundler with `bundle`.
+6. Run the Rake task "spec" to check for any errors or missing dependencies with `rake spec`.
+#
+### NodeJS and NPM in the APP VM
+
+1. Check the installed version of Node.js:
+    - Check the version of Node.js installed on the VM with `nodejs -v`.
+    - If the version is incorrect or you don't have it, proceed to the next steps.
+2. Install the required software packages for Node.js:
+    - Install the necessary module for managing software properties with `sudo apt-get install python-software-properties`.
+    - Download and execute the Node.js v6.x setup script with `curl -sl https://deb.nodesource.com/setup_6.x | sudo -E bash -`.
+    - Install the correct version of Node.js (v6.x) with `sudo apt-get install nodejs -y`.
+3. Install PM2 globally using npm with `sudo npm install pm2 -g`.
+4. Verify the app's dependencies:
+    - Change to the "app" directory with `cd app`.
+    ![Alt text](Images/ls%20inside%20app.PNG)
+    - Install the app's dependencies using the information from the `package.json` file with `npm install`.
+5. Deploy the app by executing the `app.js` file with Node.js using `node app.js`.
+6. Confirm app availability by checking if the app is running and accessible at `192.168.10.100:3000` in a web browser.
+
+This is what success looks like:
+
+![Alt text](Images/success%20web%20app.PNG)
 
