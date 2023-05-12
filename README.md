@@ -28,6 +28,7 @@
     - [Set up the Vagrant VM](#set-up-the-vagrant-vm)
     - [Finding Dependencies with Ruby](#finding-dependencies-with-ruby)
     - [NodeJS and NPM in the APP VM](#nodejs-and-npm-in-the-app-vm)
+    - [Mongo DB](#mongo-db)
 
 
 # DevOps Fundamentals
@@ -303,7 +304,57 @@ end
 ```
 
 ### NGINX Reverse Proxy
-k
+What are Ports?
+
+Ports are an endpoint of communication in an operating system. They represent a specific process or service in the system and are identified by a unique number, the port number.
+
+- Ports provide a location for services or applications to interact, typically using the TCP or UDP protocols.
+- Port numbers range from 0 to 65535, with ports 0-1023 being well-known ports assigned to commonly used protocols.
+
+What is a Reverse Proxy? How is it Different to a Proxy?
+
+A proxy server acts as an intermediary for requests from clients seeking resources from other servers, providing a level of abstraction and control to improve performance and security.
+
+A regular (forward) proxy server serves client requests on behalf of a server. 
+- The client communicates directly with the proxy server, which then communicates with the target server on behalf of the client.
+
+A reverse proxy server, on the other hand, handles requests on behalf of clients to its own network of servers.
+
+- The client communicates directly with the reverse proxy server, believing it to be the target server. The reverse proxy then forwards the client's request to the appropriate server within its network.
+
+![Alt text](Images/revese%20proxy.png)
+#
+#### Reverse Proxy Setup:
+1. Install NGINX
+  - Use `sudo apt-get update` to update
+  - Use `sudo apt-get upgrade` to upgrade
+  - Use `sudo apt-get install nginx` to install nginx
+2. Create a NGINX Config
+  - Use `sudo nano /ect/nginx/sites-available/app`
+3. Configure the reverse proxy
+  - In the new config file set up the server block by using
+  ``` 
+  server {
+    listen 80;
+    192.168.10.100;
+
+    location / {
+        proxy_pass <http://localhost:3000>;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+ - Note that you need to put ip and app url and port.
+4. Enable the config
+- Use `sudo ln -s /etc/nginx/sites-available/app/etc/nginx/sites-enabled/` 
+5. Test the config 
+- Use `sudo nginx -t`
+6. Reload NGINX
+- Use `sudo systemctl reload nginx`
 
 #
 ## Linux
@@ -467,8 +518,8 @@ sudo apt-get install ruby-full -y
 sudo gem install bundler
 # Install Python properties 
 sudo apt-get install python-software-properties -y
-# Install Node.js v6.x
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+# Install Node.js v12.x
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs
 # Install pm2 globally
 sudo npm install -g pm2
@@ -481,3 +532,145 @@ npm install
 # Start the app
 node app.js
 ```
+#
+### Multi Machine
+Changes have to be made to the vagrant file to make more than one VM:
+`config.vm.define "app" do |app|` allows me to define the app config as "app"
+so now instead of `config.vm.box = "ubuntu/bionic64"` its `app.vm.box = "ubuntu/bionic64"`
+
+This allows us to make a new config for another VM, in this case `db`
+`config.vm.define "db" do |db|`
+ip needs changing `192.168.10.100 -> 192.168.10.150` between 1-255
+
+Vagrant file: 
+```
+# configure 2 so that 2 vms created, using a new "do" block
+Vagrant.configure("2") do |config|
+  #
+  config.vm.define "app" do |app| 
+  # configures the VM settings
+    app.vm.box = "ubuntu/bionic64"
+    app.vm.network "private_network", ip:"192.168.10.100"
+
+  # put the app folder from our local machine to the VM
+    app.vm.synced_folder "app", "/home/vagrant/app"
+
+  # provision the VM to have Nginx
+    app.vm.provision "shell", path: "provision.sh", privileged: false
+  end  
+  config.vm.define "db" do |db| 
+    db.vm.box = "ubuntu/bionic64"
+    db.vm.network "private_network", ip:"192.168.10.150"
+    db.vm.synced_folder "environment", "/home/vagrant/environment"
+    db.vm.provision "shell", path: "db_provision.sh", privileged: false
+
+  end    
+end
+```
+Once you have both machines open: 
+
+Two seperate consoles: 
+- `vagrant ssh app` - Contains App
+- `vagrant ssh db` - Contains Environment
+#
+
+### Mongo DB
+#### Mongo Setup
+1. Update the VM
+  - `sudo apt-get update -y`
+  - `sudo apt-get upgrade -y`
+2. Download and Install Mongo
+  - `sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927` - make a key
+  - `echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list` - This is where to get mongodb from.
+  - `sudo apt-get update -y`
+  - `sudo apt-get upgrade -y`
+  - `sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20`- Get specific version of mongo
+3. Start Mongo
+  - `sudo systemctl start mongod`
+  - `sudo systemctl enable mongod`
+  - `sudo systemctl status mongod` 
+4. Edit the Mongo config file
+  - `sudo nano /etc/mongod.conf`
+  - change bindIP: to `0.0.0.0` to allow access from any IP
+  - `sudo systemctl restart mongod` to restart and apply changes
+  - `sudo systemctl enable mongod` to re-enable mongo
+![Alt text](Images/mongo%20config.PNG)
+
+The automated provision:
+```
+#!/usr/bin/env bash
+
+# Update the VM
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+# Download and Install Mongo
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927
+echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20
+
+# Start Mongo
+sudo systemctl start mongod
+sudo systemctl enable mongod
+
+# Edit the Mongo config file to allow access from any IP
+sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
+
+# Restart and re-enable Mongo
+sudo systemctl restart mongod
+sudo systemctl enable mongodod
+```
+#
+#### App and Database Connect
+On the VM that contains the app: 
+
+1. Create the variable using bashrc
+  - `cd ..` until in /home 
+  - `sudo nano .bashrc` 
+  - at the bottom `export DB_HOST=mongodb://192.168.10.150:27017/posts`
+  ![Alt text](Images/bashrc%20variable.PNG)
+  - `source .bashrc` to apply the changes in bashrc
+2. Install npc, seed the database and start the app.
+  - `cd vagrant` and `cd app` to get to app directory
+  - `sudo apt install npc`
+  - `node seeds/seed.js` **# Not automated, has to be inputted**
+  - `node app.js` **# Not automated, has to be inputted**
+  - `pm2 start app.js` to start it in the background **# Not automated, has to be inputted**
+  - Access the website at `http://192.168.10.100:3000/posts`
+
+Automated Provision: 
+
+```
+#!/bin/bash
+# Update and Upgrade the VM
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+# Install Nginx
+sudo apt-get install nginx -y
+
+# Install Python Properties
+sudo apt-get install python-software-properties -y
+
+# Install NodeJS
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install pm2 globally
+sudo npm install pm2 -g
+
+# Add DB_HOST variable to .bashrc
+echo "export DB_HOST=mongodb://192.168.10.150:27017/posts" >> ~/.bashrc
+source ~/.bashrc
+```
+
+#
+### Environment Variables
+
+- `env var` = environment variable
+- `printenv <variable>` or `env` to print variables
+- `export` allows the system to recognise the term as an environment variable
+- `sudo nano .bashrc` the bashrc file allows you to make an env-var persistent
+- `unset var_name` to delete an env-var
