@@ -443,7 +443,7 @@ sudo systemctl start nginx
     - Install the correct version of Node.js (v6.x) with `sudo apt-get install nodejs -y`.
 3. Install PM2 globally using npm with `sudo npm install pm2 -g`.
 4. Verify the app's dependencies:
-    - Change to the "app" directory with `cd app`.
+    - Change to the "app" directory with `cd /home/vagrant/app`.
     ![Alt text](Images/ls%20inside%20app.PNG)
     - Install the app's dependencies using the information from the `package.json` file with `npm install`.
 5. Deploy the app by executing the `app.js` file with Node.js using `node app.js`.
@@ -453,7 +453,7 @@ This is what success looks like:
 
 ![Alt text](Images/success%20web%20app.PNG)
 
-There is a way to automate this all using a provisio.sh script: 
+There is a way to automate this all using a provision.sh script: 
 ```
 #!/bin/bash
 # Update packages
@@ -467,7 +467,7 @@ sudo apt-get install ruby-full -y
 sudo gem install bundler
 # Install Python properties 
 sudo apt-get install python-software-properties -y
-# Install Node.js v14.x
+# Install Node.js v6.x
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
 # Install pm2 globally
