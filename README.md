@@ -359,6 +359,40 @@ location /posts {
 6. Reload NGINX
 - Use `sudo systemctl reload nginx`
 - Or use `sudo systemctl restart nginx`
+
+The reverse proxy can be automated by adding the following to the provision file: 
+
+```
+sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/default
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    root /var/www/html;
+    server_name 192.168.10.100;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+    location /posts {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}
+EOF'
+
+sudo nginx -t
+
+sudo systemctl reload nginx
+```
 #
 ## Linux
 
