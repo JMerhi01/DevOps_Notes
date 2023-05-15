@@ -330,32 +330,35 @@ A reverse proxy server, on the other hand, handles requests on behalf of clients
   - Use `sudo apt-get upgrade` to upgrade
   - Use `sudo apt-get install nginx` to install nginx
 2. Create a NGINX Config
-  - Use `sudo nano /ect/nginx/sites-available/app`
+  - Use `sudo nano /etc/nginx/sites-available/default`
 3. Configure the reverse proxy
   - In the new config file set up the server block by using
   ``` 
-  server {
-    listen 80;
-    192.168.10.100;
-
     location / {
-        proxy_pass <http://localhost:3000>;
+        proxy_pass http://localhost:8080;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
     }
-}
+location /posts {
+        proxy_pass http://localhost:8081;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
 ```
- - Note that you need to put ip and app url and port.
-4. Enable the config
-- Use `sudo ln -s /etc/nginx/sites-available/app/etc/nginx/sites-enabled/` 
+![](Images/reverse%20proxy%20config.PNG)
+
+- Note that you need to put ip and app url and port.
 5. Test the config 
 - Use `sudo nginx -t`
 6. Reload NGINX
 - Use `sudo systemctl reload nginx`
-
+- Or use `sudo systemctl restart nginx`
 #
 ## Linux
 
@@ -503,6 +506,8 @@ sudo systemctl start nginx
 This is what success looks like:
 
 ![Alt text](Images/success%20web%20app.PNG)
+
+You can make it run in the background by doing `ctrl z` then `bg`
 
 There is a way to automate this all using a provision.sh script: 
 ```
