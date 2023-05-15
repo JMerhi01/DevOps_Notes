@@ -11,6 +11,7 @@
     - [Copying Local Repo to Github](#copying-local-repo-to-github)
     - [Copying Github Repo to Local](#copying-github-repo-to-local)
   - [Git Commands](#git-commands)
+  - [SSH](#ssh)
 - [Virtualisation](#virtualisation)
   - [Kernel vs Shell](#kernel-vs-shell)
   - [Virtual Machines](#virtual-machines)
@@ -29,6 +30,12 @@
     - [Finding Dependencies with Ruby](#finding-dependencies-with-ruby)
     - [NodeJS and NPM in the APP VM](#nodejs-and-npm-in-the-app-vm)
     - [Mongo DB](#mongo-db)
+- [Cloud and AWS](#cloud-and-aws)
+  - [Cloud Computing](#cloud-computing)
+    - [IaaS, PaaS, and SaaS](#iaas-paas-and-saas)
+    - [Public Cloud, Hybrid Cloud and Private Cloud](#public-cloud-hybrid-cloud-and-private-cloud)
+  - [AWS (Amazon Web Services)](#aws-amazon-web-services)
+  
 
 
 # DevOps Fundamentals
@@ -191,6 +198,36 @@ When pushing, you will either need to log-in or insert a token for access.
 - `git diff` - to see changes made
 - `git status` - to see what stage each file is in
 - `notepad <filename>` - to create or open a notepad file
+#
+## SSH
+Secure Shell Connection, manual setup.
+
+When using SSH, we create a `public key` and a `private key`
+
+The Public Key is the Lock
+
+The Private Key is the Key
+
+We can give the Public Key to let's say Github, but only by providing the private key can they have access. 
+
+1. Navigate to .ssh
+- `/c/users/LebiJ/.ssh` on bash
+- `mkdir .ssh` if it's not already there
+2. Create the keys
+- `ssh-keygen -t rsa -b 4096 -C "jmerhi@spartaglobal.com"`
+- `cat jaafar_github_ssh_test.pub` to copy the key
+3. Paste the key in to github
+- `https://github.com/settings/keys`
+4. Start agent and add key
+- `ssh-agent -s`
+- `ssh-add ~/.ssh/jaafar_github_ssh_test`
+5. Test and Troubleshoot
+- Test `ssh -T git@github.com`
+- Troubleshoot:`chmod 644 jaafar_github_ssh_test`
+- `eval `ssh-agent -s`
+- `ssh -T git@github.com`
+6. Use ssh on github
+- Copy Paste SSH link in to the `git clone <git@github.com:....>`
 
 # Virtualisation
 ## Kernel vs Shell
@@ -713,3 +750,41 @@ source ~/.bashrc
 - `export` allows the system to recognise the term as an environment variable
 - `sudo nano .bashrc` the bashrc file allows you to make an env-var persistent
 - `unset var_name` to delete an env-var
+
+# Cloud and AWS
+## Cloud Computing
+
+Cloud computing is the delivery of computing services over the internet, including storage, servers, databases, networking, software, analytics, and intelligence. It allows for flexible resources, cost savings, and efficient scalability.
+#
+### IaaS, PaaS, and SaaS
+
+- IaaS (Infrastructure as a Service): Provides the infrastructure such as virtual machines and other resources like virtual-machine disk image library, block and file-based storage, firewalls, load balancers, IP addresses, virtual local area networks etc.
+
+- PaaS (Platform as a Service): This is used for applications, and other development, while providing cloud components to software. This includes development tools, database management, business intelligence (BI) services, etc.
+
+- SaaS (Software as a Service): In this service model, the cloud-based applications are provided to the user, as a service on demand. It is a single instance of the service running on the cloud and multiple end users are serviced.
+![Alt text](Images/iaas-paas-saas-hierarchy-diagram.jpg)
+![Alt text](Images/cloud-services-compared-to-transportation.jpg)
+
+
+- On-premises IT infrastructure is like owning a car. When you buy a car, you’re responsible for its maintenance, and upgrading means buying a new car.
+
+- IaaS is like leasing a car. When you lease a car, you choose the car you want and drive it wherever you wish, but the car isn’t yours. Want an upgrade? Just lease a different car!
+
+- PaaS is like taking a taxi. You don’t drive a taxi yourself, but simply tell the driver where you need to go and relax in the back seat.
+
+- SaaS is like going by bus. Buses have assigned routes, and you share the ride with other passengers.
+#
+### Public Cloud, Hybrid Cloud and Private Cloud
+
+- Public Cloud: Services are delivered over the public internet and available to anyone who wants to purchase them. Resources are shared among multiple users and accessible over the internet.
+
+- Private Cloud: Computing resources are used exclusively by a single business or organization. The private cloud can be physically located at the organization's on-site datacenter or hosted by a third-party service provider.
+
+- Hybrid Cloud: This is a combination of a private cloud combined with the use of public cloud services. This model allows for more flexibility and data deployment options.
+
+#
+## AWS (Amazon Web Services)
+
+AWS is Amazon's comprehensive and evolving cloud computing platform that includes a mixture of Infrastructure as a Service (IaaS), Platform as a Service (PaaS), and packaged Software as a Service (SaaS) offerings.
+
