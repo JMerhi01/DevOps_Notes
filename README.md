@@ -34,6 +34,7 @@
   - [Cloud Computing](#cloud-computing)
     - [IaaS, PaaS, and SaaS](#iaas-paas-and-saas)
     - [Public Cloud, Hybrid Cloud and Private Cloud](#public-cloud-hybrid-cloud-and-private-cloud)
+    - [(OpEx) and (CapEx)](#opex-and-capex)
   - [AWS (Amazon Web Services)](#aws-amazon-web-services)
   
 
@@ -220,6 +221,7 @@ We can give the Public Key to let's say Github, but only by providing the privat
 - `https://github.com/settings/keys`
 4. Start agent and add key
 - `ssh-agent -s`
+- `eval "$(ssh-agent -s)"`
 - `ssh-add ~/.ssh/jaafar_github_ssh_test`
 5. Test and Troubleshoot
 - Test `ssh -T git@github.com`
@@ -782,9 +784,61 @@ Cloud computing is the delivery of computing services over the internet, includi
 - Private Cloud: Computing resources are used exclusively by a single business or organization. The private cloud can be physically located at the organization's on-site datacenter or hosted by a third-party service provider.
 
 - Hybrid Cloud: This is a combination of a private cloud combined with the use of public cloud services. This model allows for more flexibility and data deployment options.
+#
+### (OpEx) and (CapEx)
 
+- OpEx (Operating Expenditure): These are the expenses a business incurs through its normal business operations, often accounted for in the period they were incurred (e.g., rent, utilities, and salaries) This is pay as you go and better than capex!.
+- CapEx (Capital Expenditure): These are funds used by a company to acquire or upgrade physical assets such as property, buildings, an industrial plant, technology, or equipment.
 #
 ## AWS (Amazon Web Services)
 
 AWS is Amazon's comprehensive and evolving cloud computing platform that includes a mixture of Infrastructure as a Service (IaaS), Platform as a Service (PaaS), and packaged Software as a Service (SaaS) offerings.
+#
+
+### Making an instance:
+
+1. Make sure you are on the correct server `EUW 1 - Ireland`
+2. Create the instance
+- Navigate to the EC2 dashboard
+- Select Launch Instance (with or without template)
+3. Edit the instance config
+- Name instance: "tech230_jaafar_first_ec2"
+- Select OS `Ubuntu Server 20.04 LTS`
+- Select hardware capacity `t2.micro`
+- Select Key: `tech230` ssh key
+4. Edit security settings
+- Make a new security group `"tech230_jaafar_first_sg"`
+- Add rules that select the type e.g `"ssh, http, https"`
+- Add the source type, who can connect? e.g `0.0.0.0/0` for all ip's
+5. Launch!
+
+#
+### Internal instance set-up
+1. Connecting to the instance
+- Using gitbash, give the key permissions using `chmod 400 tech230.pem` in .ssh
+- Press the `connect` button on the instance summary
+![Alt text](Images/instance%20summary%20connect.PNG)
+- Paste the given command on the page `ssh -i "tech230.pem" ubuntu@ec2-3-249-89-70.eu-west-1.compute.amazonaws.com`
+
+<ssh is the procotol, -i is identity which is our key "tech230.pem", the user we are logging in as is ubuntu@ec2 and a public dns.>
+
+
+2. Setting up the instance
+- `sudo apt update -y`
+- `sudo apt upgrade -y`
+- `sudo apt install nginx -y`
+- `sudo systemctl start nginx`
+- `sudo systemctl enable nginx`
+- `sudo systemctl status nginx` then `q`
+3. Ensure correct security groups
+- edit inbound rules
+- add rule http
+- add source 0.0.0.0/0 to allow anyone in
+- add rule https
+- add source 0.0.0.0/0 to allow anyone in
+4. Access the webserver
+- Aquire the ipv4 address from the instance summary
+![Alt text](Images/ip%20address%20ipv4.PNG)
+- access the webserver using `http://3.249.89.70/` the public ipv4 address.
+
 
