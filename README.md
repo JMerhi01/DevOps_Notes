@@ -36,6 +36,10 @@
     - [Public Cloud, Hybrid Cloud and Private Cloud](#public-cloud-hybrid-cloud-and-private-cloud)
     - [(OpEx) and (CapEx)](#opex-and-capex)
   - [AWS (Amazon Web Services)](#aws-amazon-web-services)
+    - [Making an instance](#making-an-instance)
+    - [Provisioning on AWS](#provisioning-on-aws)
+    - [App snapshot creation](#app-snapshot-creation)
+    - [DB snapshot creation](#db-snapshot-creation)
   
 
 
@@ -811,34 +815,102 @@ AWS is Amazon's comprehensive and evolving cloud computing platform that include
 - Add rules that select the type e.g `"ssh, http, https"`
 - Add the source type, who can connect? e.g `0.0.0.0/0` for all ip's
 5. Launch!
-
-#
-### Internal instance set-up
-1. Connecting to the instance
+6. Connect to the instance
 - Using gitbash, give the key permissions using `chmod 400 tech230.pem` in .ssh
 - Press the `connect` button on the instance summary
 ![Alt text](Images/instance%20summary%20connect.PNG)
 - Paste the given command on the page `ssh -i "tech230.pem" ubuntu@ec2-3-249-89-70.eu-west-1.compute.amazonaws.com`
 
 <ssh is the procotol, -i is identity which is our key "tech230.pem", the user we are logging in as is ubuntu@ec2 and a public dns.>
+#
+## AMI and Provisioning
 
+### Provisioning on AWS
 
-2. Setting up the instance
-- `sudo apt update -y`
-- `sudo apt upgrade -y`
-- `sudo apt install nginx -y`
+Userdata, very bottom of advanced details when setting up a vm. This is the same as a provision file. e.g 
+```
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install nginx -y
+```
+#
+- This is a template, os, dependencies, files, folders. A snapshot.
+
+![Alt text](Images/image%20capture.PNG)
+
+- Give it a name, capture.
+
+- Now you can launch the instance from template and use this image. 
+#
+### App snapshot creation:
+
+1. Connecting to the virtual machine
+- Navigate to the .ssh folder on bash
+- Connect using `ssh -i "tech230.pem" ubuntu@ec2-54-229-209-17.eu-west-1.compute.amazonaws.com`
+2. Copying over the app folder
+- in bash terminal, use `scp -i "C:\Users\LebiJ\.ssh\tech230.pem" -r "D:\Documents\tech_230\tech230_virtualisation\app_multi_deploy\app" ubuntu@ec2-54-74-151-246.eu-west-1.compute.amazonaws.com:/home/ubuntu/`
+3. Update and Upgrade the VM
+- `sudo apt-get update -y`
+- `sudo apt-get upgrade -y`
+4. Install Nginx
+- `sudo apt-get install nginx -y`
 - `sudo systemctl start nginx`
 - `sudo systemctl enable nginx`
 - `sudo systemctl status nginx` then `q`
-3. Ensure correct security groups
-- edit inbound rules
-- add rule http
-- add source 0.0.0.0/0 to allow anyone in
-- add rule https
-- add source 0.0.0.0/0 to allow anyone in
-4. Access the webserver
-- Aquire the ipv4 address from the instance summary
-![Alt text](Images/ip%20address%20ipv4.PNG)
-- access the webserver using `http://3.249.89.70/` the public ipv4 address.
+5. Install Python Properties
+- `sudo apt-get install python-software-properties -y`
+6. Install NodeJS
+`curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install -y nodejs`
+
+7. Install pm2 globally
+- `sudo npm install pm2 -g`
+
+8. Add DB_HOST variable to .bashrc
+- `echo "export DB_HOST=mongodb://34.245.47.11:27017/posts" >> ~/.bashrc`
+- This is using the mongovm ip address
+- `source ~/.bashrc`
+9. Test the config 
+- `sudo nginx -t`
+10. Final touches
+- `sudo systemctl reload nginx`
+- `cd app`
+- `node seeds/seed.js`
+- `pm2 start app.js`
+11. `pm2 stop app` to stop it.
+
+<Note: add rule to security group on aws, inbound port 3000 custom tcp, anyone can access 0.0.0.0/0 and change inbound rules to my ip apart from port 3000>
+#
+### DB snapshot creation:
+1. create a new vm
+2. make a provision script same as one done on vagrant
+3. copy environment files to new vm using `scp -i "C:\Users\LebiJ\.ssh\tech230.pem" -r "D:\Documents\tech_230\tech230_virtualisation\app_multi_deploy\environment" ubuntu@ec2-54-229-253-231.eu-west-1.compute.amazonaws.com:/home/ubuntu/`
+4. snapshot
 
 
+1. Import the MongoDB public GPG Key:
+- `wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -`
+2. Create a list file for MongoDB:
+- `echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list`
+3. Reload the local package database:
+- `sudo apt-get update`
+4. Install the MongoDB packages:
+- `sudo apt-get install -y mongodb-org`
+5. Start MongoDB:
+- `sudo systemctl start mongodb`
+6. Enable MongoDB to start on boot:
+- `sudo systemctl enable mongodb`
+7. Check the status of mongo:
+- `sudo systemctl status mongodb` and `q`
+8. Edit the mongo config
+- `sudo nano /etc/mongodb.conf` to access
+- Change the section `net:
+  bindIp: 127.0.0.1,54.229.209.17` or `0.0.0.0` This is to match the app IP.
+- Restart using `sudo systemctl restart mongodb`
+
+OR for version V3.6
+Use the key: 
+
+`sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6`
+#
