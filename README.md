@@ -865,7 +865,7 @@ Image: A complete copy of everything on a VM.
 
 1. Connecting to the virtual machine
 - Navigate to the .ssh folder on bash
-- Connect using `ssh -i "tech230.pem" ubuntu@ec2-54-229-209-17.eu-west-1.compute.amazonaws.com`
+- Connect using `ssh -i "tech230.pem" ubuntu@ec2-34-248-125-104.eu-west-1.compute.amazonaws.com`
 2. Copying over the app folder
 - in bash terminal, use `scp -i "C:\Users\LebiJ\.ssh\tech230.pem" -r "D:\Documents\tech_230\tech230_virtualisation\app_multi_deploy\app" ubuntu@ec2-63-34-12-128.eu-west-1.compute.amazonaws.com:/home/ubuntu/`
 3. Update and Upgrade the VM
@@ -885,7 +885,7 @@ sudo apt-get install -y nodejs`
 7. Install pm2 globally
 - `sudo npm install pm2 -g`
 8. Add DB_HOST variable to .bashrc
-- `echo "export DB_HOST=mongodb://54.220.132.125:27017/posts" >> ~/.bashrc`
+- `echo "export DB_HOST=mongodb://172.31.63.135:27017/posts" >> ~/.bashrc`
 - **This is using the mongovm private ip address**
 - `source ~/.bashrc`
 9. Test the config 
@@ -894,11 +894,13 @@ sudo apt-get install -y nodejs`
 10. Final touches
 - `sudo systemctl reload nginx`
 - `cd app`
+- `npm install`
 - `node seeds/seed.js`
 - `pm2 start app.js --update-env`
 11. `pm2 stop app` to stop it.
 
 <Note: add rule to security group on aws, inbound port 3000 custom tcp, anyone can access 0.0.0.0/0 and change inbound rules to my ip apart from port 3000>
+![Alt text](Images/inbound%20rules%20for%20database.PNG)
 #
 ### DB snapshot creation:
 1. create a new vm
@@ -938,4 +940,68 @@ OR for version V3.6
 - bindIp: `127.0.0.1,54.229.209.17` or `0.0.0.0` This is to match the app Ip
 - sudo systemctl restart mongodb
 
+### Fixing IP:
 
+### Reverse Proxy Automation
+
+
+1. Add, access and configure the bash file: 
+- `cd ..` to go to home directory
+- `sudo nano ~/provisionrp.sh`
+- Proxy_pass is all public app Ip
+```
+sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/default
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    root /var/www/html;
+    server_name 18.200.191.158;
+
+    location / {
+        proxy_pass http://18.200.191.158:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+    location /posts {
+        proxy_pass http://18.200.191.158:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}
+EOF'
+```
+
+2. Assign permissions:
+- `chmod +x ~/provisionrp.sh`
+
+
+3. Launch the script: 
+- `sudo bash provisionrp.sh`
+
+4. Restart nginx
+- `sudo systemctl restart nginx`
+#
+### App Launch Automation
+#!/bin/bash
+cd /home/ubuntu/app
+sudo systemctl reload nginx`
+node seeds/seed.js
+pm2 start app.js --update-env
+
+
+#
+### Updated App Commands: 
+1. Automated Reverse Proxy (home dir)
+- `sudo bash provisionrp.sh`
+
+2. App seed + background running (home dir)
+- `sudo bash provisionst.sh`
+
+
+do this with 18.04 lts (long term support) 
