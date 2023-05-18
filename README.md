@@ -37,6 +37,7 @@
     - [(OpEx) and (CapEx)](#opex-and-capex)
   - [AWS (Amazon Web Services)](#aws-amazon-web-services)
     - [Making an instance](#making-an-instance)
+    - [Images and Launch Templates](#images-and-launch-templates)
     - [Provisioning on AWS](#provisioning-on-aws)
     - [App snapshot creation](#app-snapshot-creation)
     - [DB snapshot creation](#db-snapshot-creation)
@@ -802,19 +803,24 @@ AWS is Amazon's comprehensive and evolving cloud computing platform that include
 ### Making an instance:
 
 1. Make sure you are on the correct server `EUW 1 - Ireland`
+
 2. Create the instance
 - Navigate to the EC2 dashboard
 - Select Launch Instance (with or without template)
+
 3. Edit the instance config
 - Name instance: "tech230_jaafar_first_ec2"
 - Select OS `Ubuntu Server 20.04 LTS`
 - Select hardware capacity `t2.micro`
 - Select Key: `tech230` ssh key
+
 4. Edit security settings
 - Make a new security group `"tech230_jaafar_first_sg"`
 - Add rules that select the type e.g `"ssh, http, https"`
 - Add the source type, who can connect? e.g `0.0.0.0/0` for all ip's
+
 5. Launch!
+
 6. Connect to the instance
 - Using gitbash, give the key permissions using `chmod 400 tech230.pem` in .ssh
 - Press the `connect` button on the instance summary
@@ -835,13 +841,25 @@ sudo apt-get upgrade -y
 sudo apt-get install nginx -y
 ```
 #
-- This is a template, os, dependencies, files, folders. A snapshot.
-
+### Images and Launch Templates
+Launch templates: Only the settings for the setup of the EC2.
 ![Alt text](Images/image%20capture.PNG)
 
-- Give it a name, capture.
 
-- Now you can launch the instance from template and use this image. 
+
+Image: A complete copy of everything on a VM.
+1. Create the image
+- Navigate to the instance
+- Navigate to "actions", "image and templates" and finally "create image"
+- Give it a name and description
+![Alt text](Images/image%20capture%20ima.PNG)
+2. Launch the instances using the image
+- Navigate to "launch instances" in the instances tab
+![Alt text](Images/launch%20instances.PNG)
+
+- Navigate to My AMIs to select the image
+![Alt text](Images/launch%20with%20image.PNG)
+
 #
 ### App snapshot creation:
 
@@ -849,7 +867,7 @@ sudo apt-get install nginx -y
 - Navigate to the .ssh folder on bash
 - Connect using `ssh -i "tech230.pem" ubuntu@ec2-54-229-209-17.eu-west-1.compute.amazonaws.com`
 2. Copying over the app folder
-- in bash terminal, use `scp -i "C:\Users\LebiJ\.ssh\tech230.pem" -r "D:\Documents\tech_230\tech230_virtualisation\app_multi_deploy\app" ubuntu@ec2-54-74-151-246.eu-west-1.compute.amazonaws.com:/home/ubuntu/`
+- in bash terminal, use `scp -i "C:\Users\LebiJ\.ssh\tech230.pem" -r "D:\Documents\tech_230\tech230_virtualisation\app_multi_deploy\app" ubuntu@ec2-63-34-12-128.eu-west-1.compute.amazonaws.com:/home/ubuntu/`
 3. Update and Upgrade the VM
 - `sudo apt-get update -y`
 - `sudo apt-get upgrade -y`
@@ -861,23 +879,23 @@ sudo apt-get install nginx -y
 5. Install Python Properties
 - `sudo apt-get install python-software-properties -y`
 6. Install NodeJS
-`curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+- use `curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs`
-
+- use `node --version` to check
 7. Install pm2 globally
 - `sudo npm install pm2 -g`
-
 8. Add DB_HOST variable to .bashrc
-- `echo "export DB_HOST=mongodb://34.245.47.11:27017/posts" >> ~/.bashrc`
-- This is using the mongovm ip address
+- `echo "export DB_HOST=mongodb://54.220.132.125:27017/posts" >> ~/.bashrc`
+- **This is using the mongovm private ip address**
 - `source ~/.bashrc`
 9. Test the config 
 - `sudo nginx -t`
+- `printenv DB_HOST`
 10. Final touches
 - `sudo systemctl reload nginx`
 - `cd app`
 - `node seeds/seed.js`
-- `pm2 start app.js`
+- `pm2 start app.js --update-env`
 11. `pm2 stop app` to stop it.
 
 <Note: add rule to security group on aws, inbound port 3000 custom tcp, anyone can access 0.0.0.0/0 and change inbound rules to my ip apart from port 3000>
@@ -885,9 +903,7 @@ sudo apt-get install -y nodejs`
 ### DB snapshot creation:
 1. create a new vm
 2. make a provision script same as one done on vagrant
-3. copy environment files to new vm using `scp -i "C:\Users\LebiJ\.ssh\tech230.pem" -r "D:\Documents\tech_230\tech230_virtualisation\app_multi_deploy\environment" ubuntu@ec2-54-229-253-231.eu-west-1.compute.amazonaws.com:/home/ubuntu/`
-4. snapshot
-
+-
 
 1. Import the MongoDB public GPG Key:
 - `wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -`
@@ -910,7 +926,16 @@ sudo apt-get install -y nodejs`
 - Restart using `sudo systemctl restart mongodb`
 
 OR for version V3.6
-Use the key: 
 
-`sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6`
-#
+- sudo apt update -y
+- sudo apt upgrade -y
+- sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recvD68FA50FEA312927
+- sudo apt install mongodb -y
+- sudo systemctl start mongodb
+- sudo systemctl enable mongodb
+- sudo systemctl status mongodb then q
+- sudo nano /etc/mongodb.conf
+- bindIp: `127.0.0.1,54.229.209.17` or `0.0.0.0` This is to match the app Ip
+- sudo systemctl restart mongodb
+
+
