@@ -1,6 +1,5 @@
 # Table of Contents
 
-- [Table of Contents](#table-of-contents)
 - [DevOps Fundamentals](#devops-fundamentals)
   - [What is DevOps?](#what-is-devops?)
   - [The Software Development Life Cycle (SDLC):](#the-software-development-life-cycle-sdlc)
@@ -30,17 +29,21 @@
     - [Finding Dependencies with Ruby](#finding-dependencies-with-ruby)
     - [NodeJS and NPM in the APP VM](#nodejs-and-npm-in-the-app-vm)
     - [Mongo DB](#mongo-db)
-- [Cloud and AWS](#cloud-and-aws)
-  - [Cloud Computing](#cloud-computing)
-    - [IaaS, PaaS, and SaaS](#iaas-paas-and-saas)
-    - [Public Cloud, Hybrid Cloud and Private Cloud](#public-cloud-hybrid-cloud-and-private-cloud)
-    - [(OpEx) and (CapEx)](#opex-and-capex)
-  - [AWS (Amazon Web Services)](#aws-amazon-web-services)
+- [Cloud Computing](#cloud-computing)
+  - [IaaS, PaaS, and SaaS](#iaas-paas-and-saas)
+  - [Public Cloud, Hybrid Cloud and Private Cloud](#public-cloud-hybrid-cloud-and-private-cloud)
+  - [(OpEx) and (CapEx)](#opex-and-capex)
+- [AWS (Amazon Web Services)](#aws-amazon-web-services)
+  - [EC2](#ec2)
     - [Making an instance](#making-an-instance)
     - [Images and Launch Templates](#images-and-launch-templates)
     - [Provisioning on AWS](#provisioning-on-aws)
     - [App snapshot creation](#app-snapshot-creation)
     - [DB snapshot creation](#db-snapshot-creation)
+    - [Reverse Proxy Automation](#reverse-proxy-automation)
+  - [S3 Buckets](#s3-buckets)
+    - [CRUD](#crud)
+    - [Python with S3](#python-with-s3)
   
 
 
@@ -758,12 +761,11 @@ source ~/.bashrc
 - `sudo nano .bashrc` the bashrc file allows you to make an env-var persistent
 - `unset var_name` to delete an env-var
 
-# Cloud and AWS
-## Cloud Computing
+# Cloud Computing
 
 Cloud computing is the delivery of computing services over the internet, including storage, servers, databases, networking, software, analytics, and intelligence. It allows for flexible resources, cost savings, and efficient scalability.
 #
-### IaaS, PaaS, and SaaS
+## IaaS, PaaS, and SaaS
 
 - IaaS (Infrastructure as a Service): Provides the infrastructure such as virtual machines and other resources like virtual-machine disk image library, block and file-based storage, firewalls, load balancers, IP addresses, virtual local area networks etc.
 
@@ -782,7 +784,7 @@ Cloud computing is the delivery of computing services over the internet, includi
 
 - SaaS is like going by bus. Buses have assigned routes, and you share the ride with other passengers.
 #
-### Public Cloud, Hybrid Cloud and Private Cloud
+## Public Cloud, Hybrid Cloud and Private Cloud
 
 - Public Cloud: Services are delivered over the public internet and available to anyone who wants to purchase them. Resources are shared among multiple users and accessible over the internet.
 
@@ -790,16 +792,16 @@ Cloud computing is the delivery of computing services over the internet, includi
 
 - Hybrid Cloud: This is a combination of a private cloud combined with the use of public cloud services. This model allows for more flexibility and data deployment options.
 #
-### (OpEx) and (CapEx)
+## (OpEx) and (CapEx)
 
 - OpEx (Operating Expenditure): These are the expenses a business incurs through its normal business operations, often accounted for in the period they were incurred (e.g., rent, utilities, and salaries) This is pay as you go and better than capex!.
 - CapEx (Capital Expenditure): These are funds used by a company to acquire or upgrade physical assets such as property, buildings, an industrial plant, technology, or equipment.
-#
-## AWS (Amazon Web Services)
+
+# AWS (Amazon Web Services)
 
 AWS is Amazon's comprehensive and evolving cloud computing platform that includes a mixture of Infrastructure as a Service (IaaS), Platform as a Service (PaaS), and packaged Software as a Service (SaaS) offerings.
 #
-
+## EC2 
 ### Making an instance:
 
 1. Make sure you are on the correct server `EUW 1 - Ireland`
@@ -829,8 +831,6 @@ AWS is Amazon's comprehensive and evolving cloud computing platform that include
 
 <ssh is the procotol, -i is identity which is our key "tech230.pem", the user we are logging in as is ubuntu@ec2 and a public dns.>
 #
-## AMI and Provisioning
-
 ### Provisioning on AWS
 
 Userdata, very bottom of advanced details when setting up a vm. This is the same as a provision file. e.g 
@@ -895,7 +895,6 @@ sudo apt-get install -y nodejs`
 - `sudo systemctl reload nginx`
 - `cd app`
 - `npm install`
-- `node seeds/seed.js`
 - `pm2 start app.js --update-env`
 11. `pm2 stop app` to stop it.
 
@@ -903,105 +902,171 @@ sudo apt-get install -y nodejs`
 ![Alt text](Images/inbound%20rules%20for%20database.PNG)
 #
 ### DB snapshot creation:
-1. create a new vm
-2. make a provision script same as one done on vagrant
--
 
-1. Import the MongoDB public GPG Key:
-- `wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -`
-2. Create a list file for MongoDB:
-- `echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list`
-3. Reload the local package database:
-- `sudo apt-get update`
-4. Install the MongoDB packages:
-- `sudo apt-get install -y mongodb-org`
-5. Start MongoDB:
+1. Connecting to the virtual machine
+- Navigate to the .ssh folder on bash
+- Connect using `ssh -i "tech230.pem" ubuntu@ec2-34-248-125-104.eu-west-1.compute.amazonaws.com`
+- `sudo apt update -y`
+- `sudo apt upgrade -y`
+- `sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recvD68FA50FEA312927`
+- `sudo apt install mongodb -y`
 - `sudo systemctl start mongodb`
-6. Enable MongoDB to start on boot:
 - `sudo systemctl enable mongodb`
-7. Check the status of mongo:
-- `sudo systemctl status mongodb` and `q`
-8. Edit the mongo config
-- `sudo nano /etc/mongodb.conf` to access
-- Change the section `net:
-  bindIp: 127.0.0.1,54.229.209.17` or `0.0.0.0` This is to match the app IP.
-- Restart using `sudo systemctl restart mongodb`
-
-OR for version V3.6
-
-- sudo apt update -y
-- sudo apt upgrade -y
-- sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recvD68FA50FEA312927
-- sudo apt install mongodb -y
-- sudo systemctl start mongodb
-- sudo systemctl enable mongodb
-- sudo systemctl status mongodb then q
-- sudo nano /etc/mongodb.conf
-- bindIp: `127.0.0.1,54.229.209.17` or `0.0.0.0` This is to match the app Ip
-- sudo systemctl restart mongodb
-
-### Fixing IP:
-
+- `sudo systemctl status mongodb` then `q`
+- `sudo nano /etc/mongodb.conf`
+- bindIp: `127.0.0.1,54.229.209.17` or `0.0.0.0` This is to match the app ip.
+- `sudo systemctl restart mongodb`
+#
 ### Reverse Proxy Automation
-
-
 1. Add, access and configure the bash file: 
 - `cd ..` to go to home directory
 - `sudo nano ~/provisionrp.sh`
-- Proxy_pass is all public app Ip
+- Script is:
 ```
-sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/default
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    root /var/www/html;
-    server_name 18.200.191.158;
-
-    location / {
-        proxy_pass http://18.200.191.158:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_cache_bypass \$http_upgrade;
-    }
-    location /posts {
-        proxy_pass http://18.200.191.158:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_cache_bypass \$http_upgrade;
-    }
-}
-EOF'
+sudo sed -i 's|try_files $uri $uri/ =404;|proxy_pass http://localhost:3000/;|g' /etc/nginx/sites-available/default
 ```
-
-2. Assign permissions:
-- `chmod +x ~/provisionrp.sh`
-
+2. Assign execute permissions:
+- `sudo chmod +x ~/provisionrp.sh`
 
 3. Launch the script: 
 - `sudo bash provisionrp.sh`
 
 4. Restart nginx
 - `sudo systemctl restart nginx`
+
 #
 ### App Launch Automation
+1. Add, access and configure the bash file:
+- `cd ..` to go to home directory
+- `sudo nano ~/provisionst.sh`
+- The script is:
+```
 #!/bin/bash
 cd /home/ubuntu/app
 sudo systemctl reload nginx`
 node seeds/seed.js
-pm2 start app.js --update-env
+pm2 start /home/ubuntu/app/app.js --update-env
+```
+2. Assign execute permissions:
+- `sudo chmod +x ~/provisionst.sh`
 
-
-#
-### Updated App Commands: 
-1. Automated Reverse Proxy (home dir)
-- `sudo bash provisionrp.sh`
-
-2. App seed + background running (home dir)
+3. Launch the script: 
 - `sudo bash provisionst.sh`
 
+#
+## S3 Buckets
+Simple Secure Storage
 
-do this with 18.04 lts (long term support) 
+You can score objects in buckets. There is no limitation to this data and it is pay as you go. 
+
+To access the bucket you need to specify the region and use an access key. 
+![Alt text](Images/aws_s3.png)
+
+#
+### CRUD
+- Create, Read, Update and Delete
+
+Using Pycharm terminal in folder:
+- `pip install awlscli` to install 
+- `aws configure`
+- Type access key
+- Type secret key
+- Type Region `eu-west-1`
+- Type output format `json`
+- Check by using `aws s3 ls`
+
+1. Create and name bucket
+- `aws s3 mb s3://tech230-jaafar-bucket --region eu-west-1`
+
+![Alt text](Images/create%20n%20name%20bucket.PNG)
+
+2. Move a file to the bucket
+- `aws s3 cp sampletext.txt s3://tech230-jaafar-bucket`
+
+3. Download entire contents of bucket to a folder of a name <s3_download>
+- `aws s3 sync s3://tech230-jaafar-bucket s3_downloads`
+
+4. Delete a file in a bucket
+- `aws s3 rm s3://tech230-jaafar-bucket/sampletext.txt`
+
+5. Delete everything from a bucket
+- `aws s3 rm s3://tech230-jaafar-bucket --recursive`
+
+6. Delete a bucket
+- `aws s3 rb s3://tech230-jaafar-bucket`
+
+#
+### Python with S3
+- `pip install boto3`
+
+We can script a lot of S3 commands:
+
+1. Accessing S3
+```
+import boto3
+
+s3 = boto3.resource("s3")
+
+# list buckets
+for bucket in s3.buckets.all():
+    print(bucket.name)
+```
+2. Creating a bucket
+```
+import boto3
+
+#connect to s3
+s3 = boto3.client("s3")
+
+# create a bucket on s3
+bucket_name = s3.create_bucket(Bucket = "tech230-jaafar-boto", CreateBucketConfiguration={"LocationConstraint": "eu-west-1"})
+
+print(bucket_name)
+```
+
+3. Upload to a bucket
+```
+import boto3
+
+# connect to s3
+s3 = boto3.resource("s3")
+
+# open the file we want to send, store it in a variable called data
+
+data = open("sampletext.txt", "rb")
+
+# specify what bucket we are sending the file to, .put_object names the file and sends its contents.
+
+s3.Bucket("tech230-jaafar-boto").put_object(Key="sampletext.txt", Body=data)
+```
+4. Download from a bucket
+```
+import boto3
+
+# connection to s3
+s3 = boto3.client("s3")
+# 1 bucket name, 2 file name we downloading, 3 file name locally after download
+s3.download_file("tech230-luke-boto", "sampletext.txt", "sampletext1.txt")
+
+print(s3.download_file)
+```
+5. Delete from a bucket
+```
+import boto3
+# connect to s3
+s3 = boto3.resource("s3")
+
+# delete a particular file in a particular bucket
+s3.Object("tech230-jaafar-boto", "sampletext.txt").delete()
+```
+6. Delete a bucket
+```
+import boto3
+
+s3 = boto3.resource("s3")
+
+bucket = s3.Bucket("tech230-jaafar-boto")
+response = bucket.delete()
+
+print(response)
+```
