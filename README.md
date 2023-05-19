@@ -1,7 +1,7 @@
 # Table of Contents
 
 - [DevOps Fundamentals](#devops-fundamentals)
-  - [What is DevOps?](#what-is-devops?)
+  - [What is DevOps?](#what-is-devops)
   - [The Software Development Life Cycle (SDLC):](#the-software-development-life-cycle-sdlc)
   - [Development Architecture](#development-architecture)
 - [Git and Github](#git-and-github)
