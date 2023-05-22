@@ -1090,38 +1090,11 @@ Scalibility and High availability
 High availability - if 1 of 3 zones goes down, traffic can be redirected.
 
 ![Alt text](Images/Autoscaling.drawio.png)
-#
-### Auto Scaling Groups
-
 ![Alt text](Images/auto%20scaling%20group.PNG)
 
-1. Step 1, Launch templates
-- Give the ASG a name and select your launch template. 
-2. Step 2, Launch options
-- Select VPC
-- Select Availabiltiy Zone (devops student default 1a, 1b and 1c)
-3. Step 3, Advanced options
-- Attach to a new load balancer
-- Application load balancer
-- Name the load balancer `LB`
-- Load balancer scheme to internet-facing
-- Listeners and routing, create a new target group with the name `TG`
-- Turn on Elastic Load Balancing health checks
-4. Step 4, group size and scaling policies
-- Desired capacity 2, minimum capacity 2, maximum capacity 3
-- Scaling policies, CPU utilization, Target 50%
-5. Step 5, Add notifications
-- Get an email when something happens e.g
-6. Step 6, Tags
-- Key = Name
-- Value = tech230-jaafar-nginx-HA-SC
-7. Step 7, Review
-- Check all, create auto scaling group
-
-Access load balancer: 
-- Load balancers, DNS name without (A record and internal)
 #
-### App Auto Scaling
+### App Auto Scaling Groups
+
 1. Create a launch template using NGINX AMI with the following user data:
 
 ```
@@ -1145,17 +1118,54 @@ npm install
 pm2 start app.js
 ```
 
-2. Create an Auto Scaling Group
-- Name given and selected LT
-- Availibility zones assigned
-- New LB created, New TG created
-- Load balancer scheme to internet-facing
-- Turned on Elastic Load Balancing health checks
-- Adjusted group size 2,2,3.
-- Made a CPU average scaling policy at 50% 
-- Tag added, Key = Name and Value = tech230-jaafar-nginapp-task
 
-3. Accessed through load balancing -> load balancers -> DNS
+1. Step 1, Launch templates
+- Give the ASG a name and select your launch template. 
+![Alt text](Images/autoscaling%20step%201.PNG)
+
+2. Step 2, Launch options
+- Select VPC
+- Select Availabiltiy Zone (devops student default 1a, 1b and 1c)
+![Alt text](Images/autoscaling%20step%202.PNG)
+
+3. Step 3, Advanced options
+- Attach to a new load balancer
+- Application load balancer
+- Name the load balancer `LB`
+- Load balancer scheme to internet-facing
+- Listeners and routing, create a new target group with the name `TG`
+- Turn on Elastic Load Balancing health checks
+![Alt text](Images/autoscaling%20step%203a.PNG)
+![Alt text](Images/autoscaling%20step%203b.PNG)
+![Alt text](Images/autoscaling%20step%203c.PNG)
+
+4. Step 4, group size and scaling policies
+- Desired capacity 2, minimum capacity 2, maximum capacity 3
+- Scaling policies, CPU utilization, Target 50%
+![Alt text](Images/autoscaling%20step%204.PNG)
+
+5. Step 5, Add notifications
+- Get an email when something happens e.g
+
+6. Step 6, Tags
+- Key = Name
+- Value = tech230-jaafar-nginx-HA-SC
+![Alt text](Images/autoscaling%20step%206.PNG)
+
+7. Step 7, Review
+- Check all, create auto scaling group
+
+Access load balancer: 
+- Accessed through load balancing -> load balancers -> DNS
 
 ![Alt text](Images/task%20working.PNG)
+#
+
+
+
+
+
+
+
+
 
