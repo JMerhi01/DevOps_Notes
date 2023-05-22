@@ -47,7 +47,7 @@
     - [CRUD](#crud)
     - [Python with S3](#python-with-s3)
   - [Autoscaling and Load balancing](#autoscaling-and-load-balancing)
-    -[App Auto Scaling Groups](#app-auto-scaling-groups)
+    - [App Auto Scaling Groups](#app-auto-scaling-groups)
     
 
 
