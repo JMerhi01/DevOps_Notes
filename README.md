@@ -47,8 +47,8 @@
     - [CRUD](#crud)
     - [Python with S3](#python-with-s3)
   - [Autoscaling and Load balancing](#autoscaling-and-load-balancing)
-    - [Auto Scaling Groups](#auto-scaling-groups)
-    - [App Auto Scaling](#app-auto-scaling)
+    -[App Auto Scaling Groups](#app-auto-scaling-groups)
+    
 
 
 # DevOps Fundamentals
