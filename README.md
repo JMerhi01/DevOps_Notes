@@ -41,6 +41,8 @@
     - [App snapshot creation](#app-snapshot-creation)
     - [DB snapshot creation](#db-snapshot-creation)
     - [Reverse Proxy Automation](#reverse-proxy-automation)
+    - [App Launch Automation](#app-launch-automation)
+    - [App File Automation](#app-file-automation)
   - [S3 Buckets](#s3-buckets)
     - [CRUD](#crud)
     - [Python with S3](#python-with-s3)
@@ -894,6 +896,7 @@ sudo apt-get install -y nodejs`
 10. Final touches
 - `sudo systemctl reload nginx`
 - `cd app`
+- `node seeds/seed.js`
 - `npm install`
 - `pm2 start app.js --update-env`
 11. `pm2 stop app` to stop it.
@@ -922,6 +925,7 @@ sudo apt-get install -y nodejs`
 - `cd ..` to go to home directory
 - `sudo nano ~/provisionrp.sh`
 - Script is:
+
 ```
 sudo sed -i 's|try_files $uri $uri/ =404;|proxy_pass http://localhost:3000/;|g' /etc/nginx/sites-available/default
 ```
@@ -952,6 +956,10 @@ pm2 start /home/ubuntu/app/app.js --update-env
 
 3. Launch the script: 
 - `sudo bash provisionst.sh`
+
+### App File Automation
+1. Clone the repo 
+- git clone https://github.com/JMerhi01/app.git
 
 #
 ## S3 Buckets
@@ -1070,3 +1078,82 @@ response = bucket.delete()
 
 print(response)
 ```
+#
+### Autoscaling and Load balancing:
+- Scale up - Allocate more computing resources
+- Scaling out - Creating more instances
+
+Scalibility and High availability
+
+High availability - if 1 of 3 zones goes down, traffic can be redirected.
+
+![Alt text](Images/Autoscaling.drawio.png)
+#
+### Auto Scaling Groups
+
+![Alt text](Images/auto%20scaling%20group.PNG)
+
+1. Step 1, Launch templates
+- Give the ASG a name and select your launch template. 
+2. Step 2, Launch options
+- Select VPC
+- Select Availabiltiy Zone (devops student default 1a, 1b and 1c)
+3. Step 3, Advanced options
+- Attach to a new load balancer
+- Application load balancer
+- Name the load balancer `LB`
+- Load balancer scheme to internet-facing
+- Listeners and routing, create a new target group with the name `TG`
+- Turn on Elastic Load Balancing health checks
+4. Step 4, group size and scaling policies
+- Desired capacity 2, minimum capacity 2, maximum capacity 3
+- Scaling policies, CPU utilization, Target 50%
+5. Step 5, Add notifications
+- Get an email when something happens e.g
+6. Step 6, Tags
+- Key = Name
+- Value = tech230-jaafar-nginx-HA-SC
+7. Step 7, Review
+- Check all, create auto scaling group
+
+Access load balancer: 
+- Load balancers, DNS name without (A record and internal)
+#
+### App Auto Scaling
+1. Create a launch template using NGINX AMI with the following user data:
+
+```
+#!/bin/bash
+
+git clone https://github.com/JMerhi01/app.git
+
+sudo apt-get install python-software-properties -y
+
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+sudo npm install pm2 -g
+
+sudo systemctl reload nginx
+
+cd app
+
+npm install
+
+pm2 start app.js
+```
+
+2. Create an Auto Scaling Group
+- Name given and selected LT
+- Availibility zones assigned
+- New LB created, New TG created
+- Load balancer scheme to internet-facing
+- Turned on Elastic Load Balancing health checks
+- Adjusted group size 2,2,3.
+- Made a CPU average scaling policy at 50% 
+- Tag added, Key = Name and Value = tech230-jaafar-nginapp-task
+
+3. Accessed through load balancing -> load balancers -> DNS
+
+![Alt text](Images/task%20working.PNG)
+
