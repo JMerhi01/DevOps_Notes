@@ -46,7 +46,9 @@
   - [S3 Buckets](#s3-buckets)
     - [CRUD](#crud)
     - [Python with S3](#python-with-s3)
-  
+  - [Autoscaling and Load balancing](#autoscaling-and-load-balancing)
+    - [Auto Scaling Groups](#auto-scaling-groups)
+    - [App Auto Scaling](#app-auto-scaling)
 
 
 # DevOps Fundamentals
@@ -1079,7 +1081,7 @@ response = bucket.delete()
 print(response)
 ```
 #
-### Autoscaling and Load balancing:
+## Autoscaling and Load balancing
 - Scale up - Allocate more computing resources
 - Scaling out - Creating more instances
 
