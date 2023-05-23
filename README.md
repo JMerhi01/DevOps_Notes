@@ -44,10 +44,12 @@
     - [App Launch Automation](#app-launch-automation)
     - [App File Automation](#app-file-automation)
   - [S3 Buckets](#s3-buckets)
-    - [CRUD](#crud)
+    - [CRUD using AWS CLI](#crud-using-aws-cli)
     - [Python with S3](#python-with-s3)
   - [Autoscaling and Load balancing](#autoscaling-and-load-balancing)
     - [App Auto Scaling Groups](#app-auto-scaling-groups)
+  - [VPC](#vpc)
+    - [VPC Setup on AWS](#vpc-setup-on-aws)
     
 
 
@@ -965,15 +967,18 @@ pm2 start /home/ubuntu/app/app.js --update-env
 
 #
 ## S3 Buckets
-Simple Secure Storage
 
-You can score objects in buckets. There is no limitation to this data and it is pay as you go. 
+S3 or Simple Storage Service enables people to store and retrieve data with flexibility in time or place. It harbours the benefits of AWS's security and reliability. 
+
+S3 can be interacted with using the AWS web interface, however it can be more efficient to use the AWS CLI (Command Line Interface) and automate tasks using AWS SDK for Python or (Boto3)
+
+![Alt text](Images/AWS%20S3.png)
 
 To access the bucket you need to specify the region and use an access key. 
-![Alt text](Images/aws_s3.png)
+
 
 #
-### CRUD
+### CRUD using AWS CLI
 - Create, Read, Update and Delete
 
 Using Pycharm terminal in folder:
@@ -1109,15 +1114,24 @@ sudo apt-get install -y nodejs
 
 sudo npm install pm2 -g
 
+echo "export DB_HOST=mongodb://172.31.35.151:27017/posts" >> ~/.bashrc
+
+source ~/.bashrc
+
+sudo sed -i 's|try_files $uri $uri/ =404;|proxy_pass http://localhost:3000/;|g' /etc/nginx/sites-available/default
+
 sudo systemctl reload nginx
 
 cd app
 
 npm install
 
-pm2 start app.js
-```
+node seeds/seed.js
 
+pm2 start app.js --update-env
+```
+- You can add a absolute path to the end of clone and cd (/home/ubuntu/app)
+- You can add a relative path using (app)
 
 1. Step 1, Launch templates
 - Give the ASG a name and select your launch template. 
@@ -1157,15 +1171,93 @@ pm2 start app.js
 
 Access load balancer: 
 - Accessed through load balancing -> load balancers -> DNS
-
+- `cat /var/log/cloud-init-output.log` to check for any errors in the instance
 ![Alt text](Images/task%20working.PNG)
 #
+## VPC
+Virtual Private Cloud
+
+- 10.0.0.0/16 the /16 makes it a CIDR block which gives the range of how many IP addresses can be used. The 16 can be changed to give more or less ip addresses. 
+
+- 10.0.255.255, the 10.0 is fixed but can be altered, the 3rd and 4th can go up to 255
+
+- VPC = house
+- subnet = room
+- the subnet can use 10.0.2.# this # is anything from 0 all the wya to 255
+
+1. For this public app subnet, who needs to get in? and How?
+- Accessed through an internet geteway to get in to the house. 
+- Accessed through a public route table to access the room
+
+![Alt text](Images/VPC.png)
 
 
+1. Create VPC (House)
+2. Create Internet Gateway (Door)
+3. Connect Internet Gateway to VPC 
+4. Create public subnet and private subnet (Rooms)
+5. Create (public) Route table
+6. Create our VMs within our subnets.
 
+#
+### VPC Setup on AWS
 
+1. Make the VPC
+- input a name
+- input the IPv4 CIDR (10.0.0.0/16)
 
+![Alt text](Images/VPC%201.PNG)
 
+2. Create Internt Gateway
+- input a name
 
+![Alt text](Images/VPC%202.PNG)
 
+3. Connect Internet Gateway to VPC
+- Select `attach to a VPC` at the top
+- Select your VPC choice
 
+![Alt text](Images/VPC%203.PNG)
+![Alt text](Images/VPC%203a.PNG)
+
+4. Create subnets
+- Select the VPC
+- Set a subnet name
+- Select the availability zone 1a, 1b, 1c
+- Set the IPv4 CIDR block (10.0.2.0/24)
+
+![Alt text](Images/VPC%204.PNG)
+
+5. Create the (public) Route Table
+- Create a name
+- Select your VPC
+
+![Alt text](Images/VPC%205.PNG)
+
+6. Connect the (public) Route Table with the 
+- Click Subnet associations in Route tables
+- Click Edit subnet associations
+- Select the **PUBLIC** subnet
+
+![Alt text](Images/VPC%206a.PNG)
+
+7. Conect the Internet Gateway to Route table
+- Click `Routes`
+- Click `Edit Routes
+- Select the desitnation of 0.0.0.0/0 and target of our internet gateway
+
+![Alt text](Images/VPC%207a.PNG)
+
+8. Create VMs in the subnets
+- Go back to EC2
+- Launch a new instance as usual with a name that includes VPC
+- Images can be used, VPC is seperate 
+- Edit network settings
+- Assign a VPC
+- Enable public IP
+- Create a new security group 
+
+![Alt text](Images/VPC%208a.PNG)
+![Alt text](Images/VPC%208b.PNG)
+
+#
