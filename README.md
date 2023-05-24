@@ -1105,33 +1105,40 @@ High availability - if 1 of 3 zones goes down, traffic can be redirected.
 ```
 #!/bin/bash
 
-git clone https://github.com/JMerhi01/app.git
+sudo apt-get update -y && sudo apt-get upgrade -y
 
-sudo apt-get install python-software-properties -y
+sudo apt-get install nginx -y
+
+sudo sed -i "s/try_files \$uri \$uri\/ =404;/proxy_pass http:\/\/localhost:3000\/;/" /etc/nginx/sites-available/default
+
+sudo sed -i "s/# pass PHP scripts to FastCGI server/location \/posts {\n\t\tproxy_pass http:\/\/localhost:3000\/posts;\n\t}/" /etc/nginx/sites-available/default
+
+sudo systemctl restart nginx && sudo systemctl enable nginx
 
 curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-sudo apt-get install -y nodejs
+
+sudo apt-get install nodejs -y
 
 sudo npm install pm2 -g
 
-echo "export DB_HOST=mongodb://172.31.35.151:27017/posts" >> ~/.bashrc
+export DB_HOST=mongodb://172.31.35.151:27017/posts
 
-source ~/.bashrc
+git clone https://github.com/JMerhi01/app.git /home/ubuntu/app
 
-sudo sed -i 's|try_files $uri $uri/ =404;|proxy_pass http://localhost:3000/;|g' /etc/nginx/sites-available/default
+cd /home/ubuntu/app
 
-sudo systemctl reload nginx
-
-cd app
-
-npm install
+sudo npm install
 
 node seeds/seed.js
 
 pm2 start app.js --update-env
+
+pm2 restart app.js --update-env
 ```
-- You can add a absolute path to the end of clone and cd (/home/ubuntu/app)
-- You can add a relative path using (app)
+
+AMI: ami-0a7493ba2bc35c1e9
+
+
 
 1. Step 1, Launch templates
 - Give the ASG a name and select your launch template. 
@@ -1173,6 +1180,32 @@ Access load balancer:
 - Accessed through load balancing -> load balancers -> DNS
 - `cat /var/log/cloud-init-output.log` to check for any errors in the instance
 ![Alt text](Images/task%20working.PNG)
+#
+### Auto Database
+```
+#!/bin/bash
+
+sudo apt-get update -y 
+
+sudo apt-get upgrade -y
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927
+
+echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+
+sudo apt-get update -y 
+
+sudo apt-get upgrade -y
+
+sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20
+
+sudo sed -i "s/127.0.0.1/0.0.0.0/" /etc/mongod.conf
+
+sudo systemctl restart mongod 
+
+sudo systemctl enable mongod
+```
+
 #
 ## VPC
 Virtual Private Cloud
@@ -1261,3 +1294,59 @@ Virtual Private Cloud
 ![Alt text](Images/VPC%208b.PNG)
 
 #
+### VPC of App and DB 
+
+1. Creating the VPC
+- Select VPC only
+- Insert a name e.g `tech230-jaafar-app-posts-vpc`
+- Insert the IPv4 CIDR `10.0.0.0/16`
+![Alt text](Images/VPC%20New%201.PNG)
+
+2. Create Internet Gateway
+- Insert a name e.g `tech230-jaafar-app-posts-IGW`
+
+3. Connect the Internet Gateway to the VPC
+- Select `actions` `attach to a VPC`
+- Select the VPC that was made earlier and attach internet gateway.
+
+4. Create the Subnets
+- Click create subnet
+- Select the VPC that was made earlier
+
+- Add public subnet name 1 `tech230-jaafar-app-posts-public-subnet`
+- Select the availability zone
+- Add the IPv4 CIDR block of `10.0.2.0/24`
+
+- Add private subnet name 2 `tech230-jaafar-app-posts-private-subnet`
+- Select the availability zone
+- Add the IPv4 CIDR block of `10.0.3.0/24`
+
+5. Create the (public) Route Table
+- Click create route table
+- Give the route table a name `tech230-jaafar-app-posts-public-RT`
+- Select the VPC that was made earlier and create
+
+6. Rename the (private) Route Table
+- Click route tables
+- The private route table was automatically created, give it a name
+
+7. Connect the (public) Route Table with the 
+- Click Route tables -> Subnet associations in Route tables
+- For the public Route Table click Edit subnet associations
+- Select the PUBLIC subnet
+- For the private Route Table click Edit subnet associations
+- Select the PRIVATE subnet
+
+8. Connect the Internet Gateway to the Route Table
+- Click Route tables -> routes
+- Click `Edit Routes
+- Select the desitnation of 0.0.0.0/0 and target of our internet gateway
+
+9. Create VMs in the subnets
+- Go back to EC2
+- Launch a new instance as usual with a name that includes VPC
+- Images can be used, VPC is seperate
+- Edit network settings
+- Assign a VPC
+- Enable public IP
+- Create a new security group
