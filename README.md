@@ -46,6 +46,7 @@
   - [S3 Buckets](#s3-buckets)
     - [CRUD using AWS CLI](#crud-using-aws-cli)
     - [Python with S3](#python-with-s3)
+    - [Boto3 in EC2](#boto3-in-ec2)
   - [Autoscaling and Load balancing](#autoscaling-and-load-balancing)
     - [App Auto Scaling Groups](#app-auto-scaling-groups)
   - [VPC](#vpc)
@@ -980,6 +981,14 @@ S3 can be interacted with using the AWS web interface, however it can be more ef
 
 To access the bucket you need to specify the region and use an access key. 
 
+**From the AWS EC2 to our AWS S3:**
+- We need AWSCLI and its dependencies
+- We also need AWS Access and Security keys
+
+**AWS S3 has various storage classes:**
+- Standard - Access data at anytime (higher cost)
+- Glacial - For infrequent data access (cheaper), ideal for long term storage and can only be accessed from time to time.
+
 
 #
 ### CRUD using AWS CLI
@@ -1089,6 +1098,87 @@ response = bucket.delete()
 
 print(response)
 ```
+#
+### Boto3 in EC2
+AWSCLI is used to command multiple AWS services and we can access S3 through this.
+
+**Steps:**
+1. Set-up process
+- Create a new EC2 ubuntu instance
+- SSH into your instance
+- `sudo apt-get update` and `sudo apt-get upgrade`
+- Install python `sudo apt install python3.8 python3-pip -y`
+- Install AWSCLI python 3 dependencies: `sudo apt install python3-pip`
+- Install awcli `sudo pip3 install awscli`
+- Enter `aws configure` to enter your access and security keys:
+```
+AWS Access Key ID [None]: 
+AWS Secret Access Key [None]:
+Default region name [None]: eu-west-1
+Default output format [None]: json
+```
+- Enter `aws s3 ls` to check that you have the correct buckets available.
+2. Applying CRUD to Buckets
+
+- Commands list: on terminal:
+```
+make bucket - `aws mb s3://[name]`
+remove bucket - `aws s3 rb s3://[name]`
+remove files - `aws s3 rm s3://[name]/[file-name]
+```
+### We can use these commands this using python boto3
+
+- Enter `pip3 install boto3`
+- Create a python file `sudo nano s3_script.py`
+
+```
+#!/usr/bin/env python3
+
+import boto3
+import os
+
+# Connect to S3
+s3_client = boto3.client('s3')
+
+# Bucket to be created
+bucket_name = "tech230-jaafar-bucket-test"
+
+# Create the bucket
+s3_client.create_bucket(
+    Bucket=bucket_name,
+    CreateBucketConfiguration={'LocationConstraint': 'eu-west-1'},
+)
+
+# Create a file to upload
+with open('test.txt', 'w') as file:
+    file.write('This is a test file.')
+
+# Upload the file
+s3_client.upload_file('test.txt', bucket_name, 'test.txt')
+
+# Download the file
+your_filename = '/home/ubuntu/test.txt'
+s3_client.download_file(bucket_name, 'test.txt', your_filename)
+
+# Get a resource to interact with S3
+s3_resource = boto3.resource('s3')
+
+# Delete the object in the bucket
+s3_resource.Object(bucket_name, 'test.txt').delete()
+
+# Delete the bucket
+s3_client.delete_bucket(Bucket=bucket_name)
+
+# Clean up the file locally
+os.remove('test.txt')
+
+```
+
+- Use `python3.8 <scriptname>.py` to start the script
+
+If this works, you should get no error! 
+
+![Alt text](Images/boto%20worked.PNG)
 #
 ## Autoscaling and Load balancing
 - Scale up - Allocate more computing resources
