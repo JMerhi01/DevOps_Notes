@@ -50,6 +50,10 @@
     - [App Auto Scaling Groups](#app-auto-scaling-groups)
   - [VPC](#vpc)
     - [VPC Setup on AWS](#vpc-setup-on-aws)
+    - [VPC of 2tier infrastructure](#vpc-of-2tier-infrastructure)
+  - [Amazon CloudWatch](#amazon-cloudwatch)
+    - [CloudWatch Dashboard](#cloudwatch-dashboard)
+    - [CloudWatch Alarm](#cloudwatch-alarm)
     
 
 
@@ -1294,7 +1298,7 @@ Virtual Private Cloud
 ![Alt text](Images/VPC%208b.PNG)
 
 #
-### VPC of App and DB 
+### VPC of 2tier infrastructure 
 
 1. Creating the VPC
 - Select VPC only
@@ -1304,10 +1308,12 @@ Virtual Private Cloud
 
 2. Create Internet Gateway
 - Insert a name e.g `tech230-jaafar-app-posts-IGW`
+![Alt text](Images/VPC%20New%202.PNG)
 
 3. Connect the Internet Gateway to the VPC
 - Select `actions` `attach to a VPC`
 - Select the VPC that was made earlier and attach internet gateway.
+![Alt text](Images/VPC%20New%203.PNG)
 
 4. Create the Subnets
 - Click create subnet
@@ -1320,15 +1326,18 @@ Virtual Private Cloud
 - Add private subnet name 2 `tech230-jaafar-app-posts-private-subnet`
 - Select the availability zone
 - Add the IPv4 CIDR block of `10.0.3.0/24`
+![Alt text](Images/VPC%20New%204.PNG)
 
 5. Create the (public) Route Table
 - Click create route table
 - Give the route table a name `tech230-jaafar-app-posts-public-RT`
 - Select the VPC that was made earlier and create
+![Alt text](Images/VPC%20New%205.PNG)
 
 6. Rename the (private) Route Table
 - Click route tables
 - The private route table was automatically created, give it a name
+![Alt text](Images/VPC%20New%206.PNG)
 
 7. Connect the (public) Route Table with the 
 - Click Route tables -> Subnet associations in Route tables
@@ -1336,11 +1345,14 @@ Virtual Private Cloud
 - Select the PUBLIC subnet
 - For the private Route Table click Edit subnet associations
 - Select the PRIVATE subnet
+![Alt text](Images/VPC%20New%207.PNG)
 
 8. Connect the Internet Gateway to the Route Table
 - Click Route tables -> routes
 - Click `Edit Routes
 - Select the desitnation of 0.0.0.0/0 and target of our internet gateway
+![Alt text](Images/VPC%20New%208.PNG)
+![Alt text](Images/VPC%20New%208a.PNG)
 
 9. Create VMs in the subnets
 - Go back to EC2
@@ -1350,3 +1362,44 @@ Virtual Private Cloud
 - Assign a VPC
 - Enable public IP
 - Create a new security group
+
+Security Group settings: 
+- App requires - 22, 3000, https, http 
+- DB requires - 22, 21017
+
+#
+## Amazon CloudWatch
+- You can use an alarm to feed in to both notifications and auto scaling. 
+- The statistics are also fed in to a dashboard that can be configured. 
+![Alt text](Images/cloud%20watch.PNG)
+
+#
+### CloudWatch Dashboard
+1. Select `Manage detailed monitoring` and enable `detailed monitoring`
+2. Click `Add to dashboard`
+![Alt text](Images/manage%20detailed%20monitoring.PNG)
+![Alt text](Images/Monitoring.PNG)
+- You can use this to monitor CPU utilisation so you can figure out what best way to set up the alarm.
+
+#
+### CloudWatch Alarm
+Creating an alarm
+1. Create the alarm
+
+![Alt text](Images/Create%20alarm.PNG)
+
+2. Select the metric
+
+![Alt text](Images/select%20metric.PNG)
+
+3. Set the metric conditions
+
+![Alt text](Images/metric%20conditions.PNG)
+
+4. Setup an email and alarm name
+
+![Alt text](Images/alarm%20email%20setup.PNG)
+
+5. ALARM! ABOVE CPU USAGE!
+
+![Alt text](Images/ALARM%20GONE%20OFF.PNG)
