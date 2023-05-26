@@ -673,6 +673,8 @@ Two seperate consoles:
 
 ### Mongo DB
 #### Mongo Setup
+- Use: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20230424
+ami-0a7493ba2bc35c1e9
 1. Update the VM
   - `sudo apt-get update -y`
   - `sudo apt-get upgrade -y`
@@ -1199,7 +1201,9 @@ High availability - if 1 of 3 zones goes down, traffic can be redirected.
 ```
 #!/bin/bash
 
-sudo apt-get update -y && sudo apt-get upgrade -y
+sudo apt-get update -y  
+
+sudo apt-get upgrade -y
 
 sudo apt-get install nginx -y
 
@@ -1215,7 +1219,7 @@ sudo apt-get install nodejs -y
 
 sudo npm install pm2 -g
 
-export DB_HOST=mongodb://172.31.35.151:27017/posts
+export DB_HOST=mongodb://10.0.3.113:27017/posts
 
 git clone https://github.com/JMerhi01/app.git /home/ubuntu/app
 
@@ -1278,8 +1282,7 @@ Access load balancer:
 ### Auto Database
 ```
 #!/bin/bash
-
-sudo apt-get update -y 
+sudo apt-get update -y
 
 sudo apt-get upgrade -y
 
@@ -1287,7 +1290,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA3129
 
 echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
 
-sudo apt-get update -y 
+sudo apt-get update -y
 
 sudo apt-get upgrade -y
 
@@ -1295,7 +1298,7 @@ sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org
 
 sudo sed -i "s/127.0.0.1/0.0.0.0/" /etc/mongod.conf
 
-sudo systemctl restart mongod 
+sudo systemctl restart mongod
 
 sudo systemctl enable mongod
 ```
@@ -1456,6 +1459,10 @@ Virtual Private Cloud
 Security Group settings: 
 - App requires - 22, 3000, https, http 
 - DB requires - 22, 21017
+
+10. Enjoy the spoils of war 
+![Alt text](Images/VPC%20WORKED.PNG)
+![Alt text](Images/VPC%20WORKED%20b.PNG)
 
 #
 ## Amazon CloudWatch
