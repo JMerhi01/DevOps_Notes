@@ -57,6 +57,12 @@
     - [CloudWatch Alarm](#cloudwatch-alarm)
 - [CICD/CDE Pipeline](#cicdcde-pipeline)
   - [Jenkins](#jenkins)
+    - [SSH creation](#ssh-creation)
+    - [Jenkins Jobs](#jenkins-jobs)
+      - [Linking two jobs](#linking-two-jobs)
+    - [Webhooks](#webhooks)
+    - [Setting up a webhook](#setting-up-a-webhook)
+    
     
 
 
@@ -1508,7 +1514,7 @@ Creating an alarm
 2. Webhooks are used to notify of this push
 3. Jenkins receives the notification to get the code from GitHub and start automating. 
 - SSH Public Key goes to GitHub, Private goes to Jenkins
-4. Jekins Tests this code in Agent Node
+4. Jenkins tests this code in Agent Node
 5. If it's approved, Master Node will deliver the code to an Amazon EC2 instance. 
 
 ![Alt text](Images/ci.PNG)
@@ -1526,13 +1532,70 @@ There are alternatives to Jenkins such as: Gitlab, CircleCI, TravisCI and more.
 
 - Jenkins uses port 8080 by default, e.g `3.9.13.91:8080`
 
-
+#
+### SSH creation
 Step 1. Create the SSH connection from localhost to github
 - `ssh-keygen -t rsa -b 4096 -C "jmerhi@spartaglobal.com"`
 - Enter the name of the file `jaafar-jenkins`
 - `cat jaafar-jenkins.pub` to get the public key
 - On GitHub, settings > SSH & GPG keys > "New SSH Key" > enter title and paste the key from jaafar-jenkins.pub.
 
-Step 2. 
+#
+### Jenkins Jobs
+
+1. **Create the job**
+- New Job: Freestyle Project
+2. **General tab**
+- Provide a description
+- Discard old builds, keep max # builds = 3
+- Tick GitHub project and insert the HTTPS Project URL e.g `https://github.com/JMerhi01/CICD-and-Jenkins.git/`
+3. **Office 365 Connector**
+- Office "Restrict where this project can be run" and use "sparta-ubuntu-node"
+4. **Source Code Managment**
+- Tick "Git" 
+- Enter the HTTPs link in the Repository URL.
+- Create or add a key > SSH Username with private key > Username and Private key
+- Change branch specifier to `*/main`
+5. **Build Triggers**
+- Tick "GitHub hook trigger for GITScm polling"
+6. **Build Environment**
+- Tick "provide node and npm/bin/folder to PATH"
+7. **Build**
+- Select "Execute shell"
+- Insert commands e.g `cd app, npm install, npm test`
+- Apply and Save
+
+#
+#### Linking two jobs
+- If the tests pass, the next job should trigger
+- For one of the jobs, click on "post build actions" at the bottom of configuration > build other projects
+- Select the other job, apply and save. 
+- If running it is successfull, this should show up in the console
+
+![Alt text](Images/pipeline%20linking%20two%20jobs.PNG)
+
+#
+### Webhooks
+What are webhooks?
+
+ - Webhooks are automated notifications sent by an application when specific events occur, triggering actions in another system or application.
 
 
+
+When a webhook is triggered:
+
+- The source system sends an HTTP POST request to the specified webhook endpoint.
+The receiving system receives the request and processes the payload.
+Actions are performed based on the received data, such as updating a database, triggering a build, or sending notifications.
+
+Webhook endpoints
+
+- Webhook endpoints are URLs where applications receive webhook notifications. For example, a chat application's webhook endpoint receives new message notifications, allowing further actions like storing, notifying, or updating the UI.
+
+#
+### Setting up a webhook
+1. Configure Jenkins and ensure Build triggers > "Github hook trigger for GITScm polling" is enable
+2. Go to Github Repo > Settings > Webhooks > Add webhook
+3. Add the payload URL which is the Jenkins server url + github-webhook e.g `http://3.9.13.91:8080/github-webhook/`
+4. Change the content type to json
+5. Test by pushing local changes and see if Jenkins starts a job
