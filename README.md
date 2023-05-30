@@ -1520,7 +1520,9 @@ Jenkins is an open-source automation server used for continuous integration and 
 
 In Jenkins, stages are defined sections within a pipeline that represent specific phases or steps of the software delivery process.
 
-- Jenkins uses port 8080 by default. 
+There are alternatives to Jenkins such as: Gitlab, CircleCI, TravisCI and more. 
+
+- Jenkins uses port 8080 by default, e.g `3.9.13.91:8080`
 
 
 Step 1. Create the SSH connection from localhost to github
