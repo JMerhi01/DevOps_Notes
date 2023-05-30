@@ -1233,9 +1233,7 @@ pm2 start app.js --update-env
 
 pm2 restart app.js --update-env
 ```
-
 AMI: ami-0a7493ba2bc35c1e9
-
 
 
 1. Step 1, Launch templates
@@ -1500,3 +1498,37 @@ Creating an alarm
 5. ALARM! ABOVE CPU USAGE!
 
 ![Alt text](Images/ALARM%20GONE%20OFF.PNG)
+
+# CICD/CDE Pipeline
+**Continous Intergration / Continous Delivery / Continous Deployment **
+
+1. Code is pushed to GitHub
+2. Webhooks are used to notify of this push
+3. Jenkins receives the notification to get the code from GitHub and start automating. 
+- SSH Public Key goes to GitHub, Private goes to Jenkins
+4. Jekins Tests this code in Agent Node
+5. If it's approved, Master Node will deliver the code to an Amazon EC2 instance. 
+
+![Alt text](Images/ci.PNG)
+
+
+
+
+#
+## Jenkins
+Jenkins is an open-source automation server used for continuous integration and delivery. It automates software build, test, and deployment processes, providing a web-based interface and extensibility through plugins. Jenkins improves development efficiency by streamlining repetitive tasks and enabling faster software delivery.
+
+In Jenkins, stages are defined sections within a pipeline that represent specific phases or steps of the software delivery process.
+
+- Jenkins uses port 8080 by default. 
+
+
+Step 1. Create the SSH connection from localhost to github
+- `ssh-keygen -t rsa -b 4096 -C "jmerhi@spartaglobal.com"`
+- Enter the name of the file `jaafar-jenkins`
+- `cat jaafar-jenkins.pub` to get the public key
+- On GitHub, settings > SSH & GPG keys > "New SSH Key" > enter title and paste the key from jaafar-jenkins.pub.
+
+Step 2. 
+
+
