@@ -55,6 +55,8 @@
   - [Amazon CloudWatch](#amazon-cloudwatch)
     - [CloudWatch Dashboard](#cloudwatch-dashboard)
     - [CloudWatch Alarm](#cloudwatch-alarm)
+- [CICD/CDE Pipeline](#cicdcde-pipeline)
+  - [Jenkins](#jenkins)
     
 
 
