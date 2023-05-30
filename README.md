@@ -62,7 +62,7 @@
       - [Linking two jobs](#linking-two-jobs)
     - [Webhooks](#webhooks)
     - [Setting up a webhook](#setting-up-a-webhook)
-    
+
     
 
 
@@ -1599,3 +1599,5 @@ Webhook endpoints
 3. Add the payload URL which is the Jenkins server url + github-webhook e.g `http://3.9.13.91:8080/github-webhook/`
 4. Change the content type to json
 5. Test by pushing local changes and see if Jenkins starts a job
+
+![Alt text](Images/webhook.PNG)
