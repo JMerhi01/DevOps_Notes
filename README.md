@@ -62,9 +62,9 @@
       - [Linking two jobs](#linking-two-jobs)
     - [Webhooks](#webhooks)
     - [Setting up a webhook](#setting-up-a-webhook)
+    - [Pipeline](#pipeline)
     - [Creating a pipeline](#creating-a-pipeline)
 
-    
 
 
 # DevOps Fundamentals
@@ -1522,8 +1522,29 @@ Creating an alarm
 
 ![Alt text](Images/ci.PNG)
 
+**Continuous Integration:**
 
+A software development practice that involves frequently integrating code changes into a shared repository to detect and address integration issues early in the development process.
 
+- Developers frequently merge their code changes into a central repository.
+- Automated tests are executed to detect integration issues.
+- Developers receive feedback on the success or failure of the integration process.
+
+**Continuous Delivery:**
+
+An approach that ensures software can be released at any time by automating the entire software release process, including building, testing, and deploying software.
+
+- Code changes are automatically built, tested, and prepared for release.
+- The release package is kept ready for deployment.
+- The software can be deployed to production manually or automatically.
+
+**Continuous Deployment:**
+
+An extension of continuous delivery where every code change that passes the automated tests is automatically deployed to production environments.
+
+- Code changes that pass the automated tests are automatically deployed to production.
+- The deployment process is fully automated, without manual intervention.
+- Enables rapid and frequent releases to end-users.
 
 #
 ## Jenkins
@@ -1607,18 +1628,54 @@ Webhook endpoints
 ![Alt text](Images/webhook.PNG)
 
 #
+### Pipeline
+
+![Alt text](Images/pipeline.png)
+
+**Code Commit:**
+- Developers commit their code changes to a version control system (e.g., Git).
+- Code changes are pushed to a shared repository.
+
+**Build:**
+- In the Jenkins job configuration (Freestyle Project), set the GitHub project URL.
+- Configure the job to run on the "sparta-ubuntu-node" node.
+- Set up Git as the source code management tool with the repository URL and SSH credentials.
+- Specify the branch specifier as `*/main`.
+- Enable the "GitHub hook trigger for GITScm polling" under Build Triggers.
+- In the Build section, use the "Execute shell" build step and provide the necessary commands (e.g., `cd app`, `npm install`, `npm test`).
+
+**Automated Testing:**
+- The pipeline triggers automatically whenever there are changes in the Git repository.
+- It runs the defined build steps, including commands for building, testing, and generating artifacts.
+- Test frameworks execute the tests and generate reports.
+- The pipeline collects the test results to assess the quality and stability of the code.
+
+**Deployment:**
+- Create a second Jenkins job to handle merging of the tested code from the `dev` branch to the `main` branch.
+- Configure the job to trigger when the first job (build and testing) is stable.
+- Use plugins or commands in the build step to perform the merge (e.g., `git checkout main`, `git merge origin/dev`).
+- Add a post-build action to trigger the third job (production deployment) if the second job is stable.
+
+**Production Deployment:**
+- Create a third Jenkins job for the production deployment stage.
+- Configure the job to trigger when the second job (code merge) is stable.
+- Use the SSH Agent plugin and provide the `tech230.pem` file for authentication.
+- In the build step, include the necessary commands to connect to the production server via SSH and deploy the application (e.g., `sudo rsync`, `pm2 kill`, `pm2 start app.js`).
+- Adjust the IP address and security group settings in the SSH script to match the target production environment.
+
+#
 ### Creating a pipeline
 1. Adjusting the first job creation
 - Changed github branch to dev
 - Added a Post-build Action to build job 2 if all is stable
 
-2. Creating Job 2, the merging of the tested code from dev to main branch
+2. Creating Job two, the merging of the tested code from dev to main branch
 - Built as usual, however:
 - Build Triggers should watch the first job if it's stable
 - Build should include plugins or commands `git checkout main and git merge origin/dev`
-- Post-build Actions should include to build the 3rd job of production if it's stable
+- Post-build Actions should include to build the third job of production if it's stable
 
-3. Creating Job 3, the production stage
+3. Creating Job three, the production stage
 - Built as usual, however: 
 - Built Triggers should watch the second job if it's stable
 - The Build Environment should have SSH Agent ticked with the tech230.pem being used (same as ec2)
@@ -1632,3 +1689,4 @@ pm2 start app.js
 EOF
 ```
 - Note: Remember to change the IP in the script above to the app pub and the security group to the Jenkin.
+
