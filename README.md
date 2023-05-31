@@ -226,6 +226,8 @@ When pushing, you will either need to log-in or insert a token for access.
 - `git diff` - to see changes made
 - `git status` - to see what stage each file is in
 - `notepad <filename>` - to create or open a notepad file
+- `git checkout dev` - Change branch 
+- `git branch dev` - Create branch
 #
 ## SSH
 Secure Shell Connection, manual setup.
@@ -1530,7 +1532,8 @@ In Jenkins, stages are defined sections within a pipeline that represent specifi
 
 There are alternatives to Jenkins such as: Gitlab, CircleCI, TravisCI and more. 
 
-- Jenkins uses port 8080 by default, e.g `3.9.13.91:8080`
+- Jenkins uses port 8080 by default, e.g `18.170.213.25:8080
+
 
 #
 ### SSH creation
@@ -1596,8 +1599,35 @@ Webhook endpoints
 ### Setting up a webhook
 1. Configure Jenkins and ensure Build triggers > "Github hook trigger for GITScm polling" is enable
 2. Go to Github Repo > Settings > Webhooks > Add webhook
-3. Add the payload URL which is the Jenkins server url + github-webhook e.g `http://3.9.13.91:8080/github-webhook/`
+3. Add the payload URL which is the Jenkins server url + github-webhook e.g `http://3.8.6.44:8080/github-webhook/`
 4. Change the content type to json
 5. Test by pushing local changes and see if Jenkins starts a job
 
 ![Alt text](Images/webhook.PNG)
+
+#
+### Creating a pipeline
+1. Adjusting the first job creation
+- Changed github branch to dev
+- Added a Post-build Action to build job 2 if all is stable
+
+2. Creating Job 2, the merging of the tested code from dev to main branch
+- Built as usual, however:
+- Build Triggers should watch the first job if it's stable
+- Build should include plugins or commands `git checkout main and git merge origin/dev`
+- Post-build Actions should include to build the 3rd job of production if it's stable
+
+3. Creating Job 3, the production stage
+- Built as usual, however: 
+- Built Triggers should watch the second job if it's stable
+- The Build Environment should have SSH Agent ticked with the tech230.pem being used (same as ec2)
+- Build should include the plugins or commands e.g
+``` 
+ssh -o "StrictHostKeyChecking=no" ubuntu@52.49.124.32 <<EOF
+sudo rsync -rv --exclude=".git" /home/ubuntu/app/ /path/to/destination/
+cd /home/ubuntu/app
+pm2 kill
+pm2 start app.js
+EOF
+```
+
