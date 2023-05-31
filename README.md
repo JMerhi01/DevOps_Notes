@@ -62,6 +62,7 @@
       - [Linking two jobs](#linking-two-jobs)
     - [Webhooks](#webhooks)
     - [Setting up a webhook](#setting-up-a-webhook)
+    - [Creating a pipeline](#creating-a-pipeline)
 
     
 
@@ -1624,10 +1625,10 @@ Webhook endpoints
 - Build should include the plugins or commands e.g
 ``` 
 ssh -o "StrictHostKeyChecking=no" ubuntu@52.49.124.32 <<EOF
-sudo rsync -rv --exclude=".git" /home/ubuntu/app/ /path/to/destination/
+sudo rsync -rv --exclude=".git" /home/ubuntu/app/
 cd /home/ubuntu/app
 pm2 kill
 pm2 start app.js
 EOF
 ```
-
+- Note: Remember to change the IP in the script above to the app pub and the security group to the Jenkin.
