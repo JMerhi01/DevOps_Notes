@@ -1585,7 +1585,11 @@ Step 3. Install Jenkins
 5. Install the plugins
 - `Install the default plugins provided`
 - `Install `Amazon EC2` `Amazon Web Services SDK :: All` `Authentication Tokens API` `CloudBees Credentials` `Config File Provider` `NodeJS` `SSH Agent`
+
+6. Configuration
 - Configure NodeJS plugin `Dashboard > Manage Jenkins > Tools > NodeJS` and select a version.
+- Configure Security `Manage Jenkins > Security > Git Host Key Verification Configuration > Accept first connection`
+![Alt text](Images/security%20jenkins.png)
 
 #
 ### SSH creation
