@@ -2,8 +2,7 @@
 
 - [DevOps Fundamentals](#devops-fundamentals)
   - [What is DevOps?](#what-is-devops)
-  - [The Software Development Life Cycle (SDLC):]
-  (#the-software-development-life-cycle-sdlc)
+  - [The Software Development Life Cycle (SDLC):](#the-software-development-life-cycle-sdlc)
   - [Four Pillars of DevOps](#four-pillars-of-devops)
   - [Development Architecture](#development-architecture)
 - [Git and Github](#git-and-github)
