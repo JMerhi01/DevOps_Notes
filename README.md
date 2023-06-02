@@ -2,7 +2,9 @@
 
 - [DevOps Fundamentals](#devops-fundamentals)
   - [What is DevOps?](#what-is-devops)
-  - [The Software Development Life Cycle (SDLC):](#the-software-development-life-cycle-sdlc)
+  - [The Software Development Life Cycle (SDLC):]
+  (#the-software-development-life-cycle-sdlc)
+  - [Four Pillars of DevOps](#four-pillars-of-devops)
   - [Development Architecture](#development-architecture)
 - [Git and Github](#git-and-github)
   - [Git Setup](#git-setup)
@@ -57,6 +59,7 @@
     - [CloudWatch Alarm](#cloudwatch-alarm)
 - [CICD/CDE Pipeline](#cicdcde-pipeline)
   - [Jenkins](#jenkins)
+    - [Creating a Jenkins Server](#creating-a-jenkins-server)
     - [SSH creation](#ssh-creation)
     - [Jenkins Jobs](#jenkins-jobs)
       - [Linking two jobs](#linking-two-jobs)
@@ -1545,10 +1548,11 @@ An extension of continuous delivery where every code change that passes the auto
 - Code changes that pass the automated tests are automatically deployed to production.
 - The deployment process is fully automated, without manual intervention.
 - Enables rapid and frequent releases to end-users.
+![Alt text](Images/jenkins%20simple.PNG)
 
 #
 ## Jenkins
-Jenkins is an open-source automation server used for continuous integration and delivery. It automates software build, test, and deployment processes, providing a web-based interface and extensibility through plugins. Jenkins improves development efficiency by streamlining repetitive tasks and enabling faster software delivery.
+Jenkins is an open-source automation server used for continuous integration, delivery and deployment. It automates software build, test, and deployment processes, providing a web-based interface and extensibility through plugins. Jenkins improves development efficiency by streamlining repetitive tasks and enabling faster software delivery.
 
 In Jenkins, stages are defined sections within a pipeline that represent specific phases or steps of the software delivery process.
 
@@ -1556,6 +1560,32 @@ There are alternatives to Jenkins such as: Gitlab, CircleCI, TravisCI and more.
 
 - Jenkins uses port 8080 by default, e.g `18.170.213.25:8080
 
+#
+### Creating a Jenkins Server
+Step 1. Create the EC2 instance
+- `ami-0a7493ba2bc35c1e9`
+
+Step 2. Update and install depedencies
+- `sudo apt-get update && sudo apt-get upgrade -y`
+- `sudo apt install default-jre -y`
+- `curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -`
+- `sudo apt-get install -y nodejs`
+
+Step 3. Install Jenkins
+- `wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -`
+- `echo deb http://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list`
+- `sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5BA31D57EF5975CA`
+- `sudo apt-get update`
+- `sudo apt-get install jenkins`
+
+4. Get the Jenkins unlock key
+- Use `sudo cat /var/lib/jenkins/secrets/initialAdminPassword`
+- Copy paste the password in to the Jenkins webpage which will be <publicip>:8080
+
+5. Install the plugins
+- `Install the default plugins provided`
+- `Install `Amazon EC2` `Amazon Web Services SDK :: All` `Authentication Tokens API` `CloudBees Credentials` `Config File Provider` `NodeJS` `SSH Agent`
+- Configure NodeJS plugin `Dashboard > Manage Jenkins > Tools > NodeJS` and select a version.
 
 #
 ### SSH creation
@@ -1689,4 +1719,9 @@ pm2 start app.js
 EOF
 ```
 - Note: Remember to change the IP in the script above to the app pub and the security group to the Jenkin.
+#
+I managed to create my own Jenkins server and configure the pipeline on that server!
 
+![Alt text](Images/jenkins%20success%201.PNG)
+![Alt text](Images/jenkins%20success%202.PNG)
+#
