@@ -1759,44 +1759,58 @@ You can set up local cloud or hybrid infrastructure.
 
 #
 ### Automating Infrastructure Locally
+![Alt text](Images/Local.png)
 
 First let's create the three virtual machines, controller, web and db.  
 - `Vagrant init`
 ```
 Vagrant.configure("2") do |config|
-  # Controller VM
   config.vm.define "controller" do |controller|
     controller.vm.box = "bento/ubuntu-18.04"
-    controller.vm.hostname = "controller"
-    controller.vm.network "private_network", ip: "192.168.33.10"
-    controller.vm.provision "shell", inline: <<-SHELL
-      apt-get update
-      apt-get upgrade -y
-    SHELL
+    controller.vm.hostname = 'controller'
+    controller.vm.network :private_network, ip: "192.168.33.12"
   end
 
-  # Web VM
   config.vm.define "web" do |web|
     web.vm.box = "bento/ubuntu-18.04"
-    web.vm.hostname = "web"
-    web.vm.network "private_network", ip: "192.168.33.20"
-    web.vm.provision "shell", inline: <<-SHELL
-      apt-get update
-      apt-get upgrade -y
-    SHELL
+    web.vm.hostname = 'web'
+    web.vm.network :private_network, ip: "192.168.33.10"
   end
 
-  # DB VM
   config.vm.define "db" do |db|
     db.vm.box = "bento/ubuntu-18.04"
-    db.vm.hostname = "db"
-    db.vm.network "private_network", ip: "192.168.33.30"
-    db.vm.provision "shell", inline: <<-SHELL
-      apt-get update
-      apt-get upgrade -y
-    SHELL
+    db.vm.hostname = 'db'
+    db.vm.network :private_network, ip: "192.168.33.11"
   end
 end
 ```
+Accessing the Virtual Machines
 - `Vagrant up`
 - `Vagrant ssh "db, web or controller"`
+- `vagrant ssh controller` to access the controller
+- `ssh vagrant@192.168.33.20` to get in to the app from the controller
+- password `vagrant`
+- `exit` to exit back to controller
+
+Setting up the ansible controller
+
+- `sudo apt-get install software-properties-common -y`
+- `sudo apt-add-repository ppa:ansible/ansible -y`
+- `sudo apt-get update -y`
+- `sudo apt-get install ansible -y`
+- `sudo apt-get install tree -y`
+
+You can find the hosts and ansible.cfg files in `/ect/ansible/`
+
+The hosts is used to store the addresses of hosts, so you need to add the following using `sudo nano hosts`:
+```
+[web]
+192.168.33.10 ansible_connection=ssh ansible_ssh_user=vagrant ansible_ssh_pass=vagrant`
+```
+Then test the connection using: `sudo ansible all -m ping`
+
+If it doesn't work, a unrecommended fix is to edit the ansible.cfg and comment out the `host_key_checking = False`
+
+![Alt text](Images/local%20ansible%20win.PNG)
+
+
