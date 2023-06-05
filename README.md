@@ -66,6 +66,9 @@
     - [Setting up a webhook](#setting-up-a-webhook)
     - [Pipeline](#pipeline)
     - [Creating a pipeline](#creating-a-pipeline)
+- [Infrastructure as Code (IaC)](#infrastructure-as-code-iac)
+  - [Ansible](#ansible)
+  - [Automating Infrastructure Locally](#automating-infrastructure-locally)
 
 
 
@@ -1728,3 +1731,72 @@ I managed to create my own Jenkins server and configure the pipeline on that ser
 ![Alt text](Images/jenkins%20success%201.PNG)
 ![Alt text](Images/jenkins%20success%202.PNG)
 #
+## Infrastructure as Code (IaC)
+Managing Infrastructure with Automation Tools
+
+IaC involves managing and provisioning infrastructure through code using tools like Ansible and Terraform, replacing manual processes.
+Configuration files are created to define infrastructure specifications, making it easier to edit, distribute, and ensure consistent environments.
+Effective configuration management promotes collaboration, ease of use, and automation by utilising well-documented and modular components.
+
+You can set up local cloud or hybrid infrastructure. 
+
+### Ansible 
+
+**What is Ansible?**
+- Ansible is an open-source automation tool that simplifies IT infrastructure provisioning, configuration management, and application deployment. It runs on Python as a dependency. 
+
+**How is it used and why is it good?**
+- Ansible uses a declarative language to define tasks and playbooks for automation.
+- It is agentless, meaning it does not require installing additional software on managed nodes.
+- Ansible is good because it is simple, efficient, and provides a consistent and scalable way to manage systems.
+
+**How is it agentless?**
+- Ansible communicates with managed nodes over SSH or WinRM, eliminating the need for agents or daemons.
+
+**Its use with YAML:**
+- Ansible uses YAML (Yet Another Markup Language) for defining playbooks and inventory files.
+- YAML is a human-readable data serialization format, making Ansible playbooks easy to read, write, and understand.
+
+#
+### Automating Infrastructure Locally
+
+First let's create the three virtual machines, controller, web and db.  
+- `Vagrant init`
+```
+Vagrant.configure("2") do |config|
+  # Controller VM
+  config.vm.define "controller" do |controller|
+    controller.vm.box = "bento/ubuntu-18.04"
+    controller.vm.hostname = "controller"
+    controller.vm.network "private_network", ip: "192.168.33.10"
+    controller.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get upgrade -y
+    SHELL
+  end
+
+  # Web VM
+  config.vm.define "web" do |web|
+    web.vm.box = "bento/ubuntu-18.04"
+    web.vm.hostname = "web"
+    web.vm.network "private_network", ip: "192.168.33.20"
+    web.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get upgrade -y
+    SHELL
+  end
+
+  # DB VM
+  config.vm.define "db" do |db|
+    db.vm.box = "bento/ubuntu-18.04"
+    db.vm.hostname = "db"
+    db.vm.network "private_network", ip: "192.168.33.30"
+    db.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get upgrade -y
+    SHELL
+  end
+end
+```
+- `Vagrant up`
+- `Vagrant ssh "db, web or controller"`
