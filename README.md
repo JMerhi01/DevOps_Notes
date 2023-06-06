@@ -69,6 +69,7 @@
 - [Infrastructure as Code (IaC)](#infrastructure-as-code-iac)
   - [Ansible](#ansible)
   - [Automating Infrastructure Locally](#automating-infrastructure-locally)
+  - [Ansible App Setup](#ansible-app-setup)
 
 
 
@@ -1812,5 +1813,123 @@ Then test the connection using: `sudo ansible all -m ping`
 If it doesn't work, a unrecommended fix is to edit the ansible.cfg and comment out the `host_key_checking = False`
 
 ![Alt text](Images/local%20ansible%20win.PNG)
+
+Ansible Commands:
+- `sudo ansible <vm name> -a "<command>"`
+- `sudo ansible web -a "uname -a"`
+With this command, ansible will search for the [web] written in the hosts file and carry out the command of your choice. 
+
+- `sudo ansible web -m copy -a "src=/etc/ansible/test.txt dest=/home/vagrant"`
+This command copies a file to a chosen directory in the web vm. 
+
+
+Limitations can come about locally: 
+- `uname -a` Check operating system (command diff)
+- `date` - Check time and date (timezone)
+- `free -m` - Check memory usage (capacity)
+#
+### Ansible App Setup
+
+Using an Ansible Playbook to install NGINX
+
+- `sudo nano config_nginx_web.yml`
+```
+# create a playbook to install nginx in web-server/s
+
+# three dashes are used ot start the YAML file
+
+---
+
+# Add the name of the host
+- hosts: web
+
+# gather facts about the steps
+  gather_facts: yes
+
+# add admins access to the file
+  become: true
+
+# add instructions/tasks to install nginx
+  tasks:
+  - name: Installing Nginx
+    apt: pkg=nginx state=present
+
+# install nginx and enable nginx - ensure status is running
+```
+- `sudo ansible-playbook config_nginx_web.yml`
+---
+Moving the app folder: 
+- `scp -r D:/Documents/tech_230/tech230_ansible/app vagrant@192.168.33.12:~/` To get it on controller
+- `sudo nano app_move.yml`
+```
+---
+- name: Copy app folder to web VM
+  hosts: web
+  tasks:
+    - name: Ensure destination directory exists
+      file:
+        path: /home/vagrant/app
+        state: directory
+      become: true
+
+    - name: Copy app folder from controller to web
+      copy:
+        src: /home/vagrant/app/
+        dest: /home/vagrant/app/
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
+      become: true
+```
+to move the app folder, `sudo ansible-playbook app_move.yml`
+
+----
+Installing Node, pm2, npm and starting app: 
+- `sudo nano node_pm2_appstart.yml`
+```
+---
+- name: Setup Node.js environment and start app on web VM
+  hosts: web
+  become: yes
+
+  tasks:
+    - name: Gathering Facts
+      setup:
+      
+    - name: Update the system
+      apt:
+        update_cache: yes
+      
+    - name: Install curl
+      apt:
+        name: curl
+        state: present
+      
+    - name: Add Node.js 14.x repository
+      shell: curl -sL https://deb.nodesource.com/setup_14.x | bash -
+      args:
+        warn: false
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+
+    - name: Install pm2 globally
+      command: npm install pm2 -g
+      environment:
+        PATH: /usr/bin
+
+    - name: Install npm dependencies
+      command: npm install
+      args:
+        chdir: /home/vagrant/app 
+      
+    - name: Start the application using PM2
+      command: pm2 start app.js --update-env
+      args:
+        chdir: /home/vagrant/app 
+```
+start the playbook using: `sudo ansible-playbook node_pm2_appstart.yml`
 
 
