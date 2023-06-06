@@ -1943,6 +1943,12 @@ Installing Node, pm2, npm and starting app with reverse proxy setup:
 ```
 start the playbook using: `sudo ansible-playbook node_pm2_appstart.yml`
 
+This is what the playbook looks like:
+![Alt text](Images/ansible%20example.PNG)
 
+Win!
+![Alt text](Images/ansible%20local%20win.PNG)
+
+#
 
 
