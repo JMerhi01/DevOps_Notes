@@ -1884,7 +1884,7 @@ Moving the app folder:
 to move the app folder, `sudo ansible-playbook app_move.yml`
 
 ----
-Installing Node, pm2, npm and starting app: 
+Installing Node, pm2, npm and starting app with reverse proxy setup: 
 - `sudo nano node_pm2_appstart.yml`
 ```
 ---
@@ -1895,16 +1895,16 @@ Installing Node, pm2, npm and starting app:
   tasks:
     - name: Gathering Facts
       setup:
-      
+
     - name: Update the system
       apt:
         update_cache: yes
-      
+
     - name: Install curl
       apt:
         name: curl
         state: present
-      
+
     - name: Add Node.js 14.x repository
       shell: curl -sL https://deb.nodesource.com/setup_14.x | bash -
       args:
@@ -1923,13 +1923,26 @@ Installing Node, pm2, npm and starting app:
     - name: Install npm dependencies
       command: npm install
       args:
-        chdir: /home/vagrant/app 
-      
+        chdir: /home/vagrant/app
+
+    - name: Set up Nginx reverse proxy
+      replace:
+        path: /etc/nginx/sites-available/default
+        regexp: 'try_files \$uri \$uri/ =404;'
+        replace: 'proxy_pass http://localhost:3000/;'
+
+    - name: Reload Nginx to apply changes
+      systemd:
+        name: nginx
+        state: reloaded
+
     - name: Start the application using PM2
       command: pm2 start app.js --update-env
       args:
-        chdir: /home/vagrant/app 
+        chdir: /home/vagrant/app
 ```
 start the playbook using: `sudo ansible-playbook node_pm2_appstart.yml`
+
+
 
 
