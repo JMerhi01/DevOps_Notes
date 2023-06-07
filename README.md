@@ -1885,12 +1885,15 @@ to move the app folder, `sudo ansible-playbook app_move.yml`
 
 ----
 Installing Node, pm2, npm and starting app with reverse proxy setup: 
-- `sudo nano node_pm2_appstart.yml`
+- `sudo nano app_setup.yml`
 ```
 ---
 - name: Setup Node.js environment and start app on web VM
   hosts: web
   become: yes
+  vars:
+    db_host: mongodb://192.168.33.11:27017/posts
+    app_path: /home/vagrant/app
 
   tasks:
     - name: Gathering Facts
@@ -1916,14 +1919,19 @@ Installing Node, pm2, npm and starting app with reverse proxy setup:
         state: present
 
     - name: Install pm2 globally
-      command: npm install pm2 -g
-      environment:
-        PATH: /usr/bin
+      npm:
+        name: pm2
+        global: yes
+
+    - name: Clone the app
+      git:
+        repo: https://github.com/JMerhi01/app.git
+        dest: "{{ app_path }}"
+      ignore_errors: yes
 
     - name: Install npm dependencies
-      command: npm install
-      args:
-        chdir: /home/vagrant/app
+      npm:
+        path: "{{ app_path }}"
 
     - name: Set up Nginx reverse proxy
       replace:
@@ -1936,18 +1944,90 @@ Installing Node, pm2, npm and starting app with reverse proxy setup:
         name: nginx
         state: reloaded
 
+    - name: Seed the database
+      command: node seeds/seed.js
+      args:
+        chdir: "{{ app_path }}"
+      environment:
+        DB_HOST: "{{ db_host }}"
+
     - name: Start the application using PM2
       command: pm2 start app.js --update-env
       args:
-        chdir: /home/vagrant/app
+        chdir: "{{ app_path }}"
+      environment:
+        DB_HOST: "{{ db_host }}"
+      ignore_errors: yes
+
+    - name: Restart the application using PM2
+      command: pm2 restart app.js --update-env
+      args:
+        chdir: "{{ app_path }}"
+      environment:
+        DB_HOST: "{{ db_host }}"
+...
 ```
-start the playbook using: `sudo ansible-playbook node_pm2_appstart.yml`
+- `sudo ansible-playbook app_setup.yml`
 
 This is what the playbook looks like:
 ![Alt text](Images/ansible%20example.PNG)
 
 Win!
 ![Alt text](Images/ansible%20local%20win.PNG)
+
+#
+Setting up the mongodb database:
+
+- `sudo nano mongo_setup_p.yml`
+
+```
+---
+- hosts: db
+  become: yes
+  tasks:
+
+  - name: Add MongoDB APT key
+    apt_key:
+      keyserver: hkp://keyserver.ubuntu.com:80
+      id: D68FA50FEA312927
+
+  - name: Add MongoDB APT repository
+    apt_repository:
+      repo: deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
+      state: present
+      filename: 'mongodb-org-3.2'
+
+  - name: Update all packages
+    apt:
+      update_cache: yes
+      upgrade: yes
+
+  - name: Install MongoDB
+    apt:
+      name:
+        - mongodb-org=3.2.20
+        - mongodb-org-server=3.2.20
+        - mongodb-org-shell=3.2.20
+        - mongodb-org-mongos=3.2.20
+        - mongodb-org-tools=3.2.20
+      state: present
+
+  - name: Configure MongoDB
+    lineinfile:
+      path: /etc/mongod.conf
+      regexp: '^  bindIp: 127.0.0.1$'
+      line: '  bindIp: 0.0.0.0'
+      
+  - name: Ensure mongodb is running
+    systemd:
+      name: mongod
+      state: started
+      enabled: yes
+...
+```
+- `sudo ansible-playbook mongo_setup_p.yml`
+
+![Alt text](Images/ansible%20database%20win!.PNG)
 
 #
 
