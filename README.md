@@ -68,9 +68,11 @@
     - [Creating a pipeline](#creating-a-pipeline)
 - [Infrastructure as Code (IaC)](#infrastructure-as-code-iac)
   - [Ansible](#ansible)
-  - [Automating Infrastructure Locally](#automating-infrastructure-locally)
-  - [Ansible App Setup](#ansible-app-setup)
-
+    - [Automating Infrastructure Locally](#automating-infrastructure-locally)
+    - [Ansible App Setup](#ansible-app-setup)
+  - [Terraform](#terraform)
+    - [Installing Terraform with Powershell](#installing-terraform-with-powershell)
+    -
 
 
 # DevOps Fundamentals
@@ -1741,7 +1743,7 @@ Effective configuration management promotes collaboration, ease of use, and auto
 
 You can set up local cloud or hybrid infrastructure. 
 
-### Ansible 
+## Ansible 
 
 **What is Ansible?**
 - Ansible is an open-source automation tool that simplifies IT infrastructure provisioning, configuration management, and application deployment. It runs on Python as a dependency. 
@@ -2028,7 +2030,16 @@ Setting up the mongodb database:
 - `sudo ansible-playbook mongo_setup_p.yml`
 
 ![Alt text](Images/ansible%20database%20win!.PNG)
-
 #
+## Terraform
+
+### Installing Terraform with Powershell
+- Run Windows Powershell as Administrator
+- run `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`
+- Check Chocolately is properly installed with `choco -?`
+- Run `choco install terraform`
+- Check Terraform is properly installed with `terraform -version`
+
+
 
 
