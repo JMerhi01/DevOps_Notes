@@ -2471,3 +2471,14 @@ resource "aws_instance" "app_instance" {
   }
 }
 ```
+#
+### Applying Outputs on Terraform
+You make a file named `outputs.tf` and use commands to bring back the IP of the App, this means you NEVER need to even access AWS. 
+```
+# Outputs
+# --------
+# Show EC2 App Instance Public IPv4 Address
+
+
+# Show EC2 DB Instance Private IPV4 Address
+```
