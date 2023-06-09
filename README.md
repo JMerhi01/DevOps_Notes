@@ -72,7 +72,10 @@
     - [Ansible App Setup](#ansible-app-setup)
   - [Terraform](#terraform)
     - [Installing Terraform with Powershell](#installing-terraform-with-powershell)
-    -
+    - [Terraform Commands](#terraform-commands)
+    - [Codify using Terraform](#codify-using-terraform)
+    - [Creating a VPC using Terraform!](#creating-a-vpc-using-terraform)
+    - [Creating a VPC, App and DB on Terraform!](#creating-a-vpc-app-and-db-on-terraform)
 
 
 # DevOps Fundamentals
@@ -2033,6 +2036,18 @@ Setting up the mongodb database:
 #
 ## Terraform
 
+Terraform is an infrastructure as code (IaC) tool that automates provisioning and management of cloud resources. It enables defining infrastructure configurations as code, promoting efficiency, scalability, and reproducibility in managing complex environments.
+
+Key Features and Benefits of Terraform:
+
+- Infrastructure as Code: Define configurations as code for better manageability and scalability.
+- Automation: Automate provisioning and management, reducing manual intervention and errors.
+- Multi-Cloud and Multi-Provider Support: Manage resources across different providers, avoiding vendor lock-in.
+
+![Alt text](Images/Terraform_AWS.png)
+
+![Alt text](Images/Terraform_AWS%202.PNG)
+
 ### Installing Terraform with Powershell
 - Run Windows Powershell as Administrator
 - run `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`
@@ -2040,6 +2055,389 @@ Setting up the mongodb database:
 - Run `choco install terraform`
 - Check Terraform is properly installed with `terraform -version`
 
+Also install these VSCode Extensions:
+- HashiCorp Terraform
+- Terraform Autocomplete
+- Terraform doc snippets
+
+Files
+- .tf extension - main.tf is your 'runner' file; the file that executes everything
 
 
+### Setting up AWS environment variable
+- Windows key > search env > click 'Environment Variables...' > enter the AWS Key variables into 'User variables" so it's specific to this user and not the entire system. Follow specific AWS key syntax - case sensitive.
+- `AWS_ACCESS_KEY_ID` for aws access key variable
+- `AWS_SECRET_ACCESS_KEY` for aws secret key variable
 
+### Terraform Commands
+
+- `terraform init` to initialise terraform
+- `terraform plan` reads your script and checks it. Similar to ansible --check
+- `terraform apply` to run the playbook/implement the script
+- `terraform destroy` to delete everything
+- `terraform` for a full list of terraform commands
+
+
+### Codify using Terraform
+
+- `nano main.tf`
+```
+# To create a service on AWS cloud
+# Launch an EC2 instance in Ireland
+# Terraform to downlaod required packages
+# Terraform init
+
+provider "aws" {
+# which regions of AWS
+        region = "eu-west-1"
+
+
+}
+
+# Gitbash must have admin access
+# Launch an EC2
+
+
+# Which resource -
+resource "aws_instance" "app_instance"{
+
+# which AMI - Ubuntu 18.04
+        ami = "ami-00e8ddf087865b27f"
+
+# Type of instance - T2.Micro
+        instance_type = "t2.micro"
+
+# Do you need public ip - Yes
+        associate_public_ip_address = true
+
+# What would you like to name it -
+        tags = {
+             Name = "tech230-jaafar-terraform-app"
+        }
+
+}
+
+```
+#
+### Creating a VPC using Terraform!
+
+```
+# Defines the VPC (Virtual Private Cloud)
+resource "aws_vpc" "tech230_jaafar_tf_vpc" {
+  cidr_block       = var.cidr_block
+  instance_tenancy = "default"
+
+  # Assigns tags to the VPC for identification
+  tags = {
+    Name = "tech230_jaafar_vpc_tf"
+  }
+}
+
+# Creates an internet gateway and associates it with the VPC
+resource "aws_internet_gateway" "tech230_jaafar_tf_igw" {
+  vpc_id = aws_vpc.tech230_jaafar_tf_vpc.id
+
+  tags = {
+    Name = "tech230_jaafar_tf_igw"
+  }
+}
+
+# Creates a public subnet within the VPC
+resource "aws_subnet" "tech230_jaafar_tf_vpc_publicSN" {
+  vpc_id                  = aws_vpc.tech230_jaafar_tf_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = var.avail_zone
+
+  # Assigns tags to the subnet for identification
+  tags = {
+    Name = "tech230_jaafar_tf_vpc_publicSN"
+  }
+}
+
+# Creates a route table associated with the VPC
+resource "aws_route_table" "tech230_jaafar_tf_rt" {
+  vpc_id = aws_vpc.tech230_jaafar_tf_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.tech230_jaafar_tf_igw.id
+  }
+
+  tags = {
+    Name = "tech230_jaafar_tf_route_table"
+  }
+}
+
+# Configures a security group for the EC2 instance
+resource "aws_security_group" "tech230_jaafar_sg_tf_app" {
+  name        = "tech230_jaafar_tf_sg_app"
+  description = "Allow inbound traffic"
+  vpc_id      = aws_vpc.tech230_jaafar_tf_vpc.id
+
+  # Ingress rules to allow inbound traffic on specific ports
+  ingress {
+    description    = "access to the app"
+    from_port      = 80
+    to_port        = 80
+    protocol       = "tcp"
+    cidr_blocks    = ["0.0.0.0/0"]
+  }
+
+  # Allows SSH access
+  ingress {
+    description    = "SSH access"
+    from_port      = 22
+    to_port        = 22
+    protocol       = "tcp"
+    cidr_blocks    = ["0.0.0.0/0"]
+  }
+
+  # Allows port 3000 from anywhere
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allows all outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1" 
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Assigns tags to the security group for identification
+  tags = {
+    Name = "tech230_jaafar_tf_sg_app"
+  }
+}
+
+# Creates an internet gateway and associates it with the VPC
+resource "aws_route_table_association" "tech230_jaafar_tf_subnet_association" {
+  route_table_id = aws_route_table.tech230_jaafar_tf_rt.id
+  subnet_id      = aws_subnet.tech230_jaafar_tf_vpc_publicSN.id
+}
+
+# Creates a private subnet within the VPC
+resource "aws_subnet" "tech230_jaafar_tf_vpc_privateSN" {
+  vpc_id                  = aws_vpc.tech230_jaafar_tf_vpc.id
+  cidr_block              = "10.0.3.0/24"
+  map_public_ip_on_launch = false
+  availability_zone       = var.avail_zone
+
+  # Assigns tags to the subnet for identification
+  tags = {
+    Name = "tech230_jaafar_tf_vpc_privateSN"
+  }
+}
+
+# Associates the private subnet with the automatically created private route table
+resource "aws_route_table_association" "tech230_jaafar_tf_private_subnet_association" {
+  route_table_id = aws_vpc.tech230_jaafar_tf_vpc.default_route_table_id
+  subnet_id      = aws_subnet.tech230_jaafar_tf_vpc_privateSN.id
+}
+
+```
+#
+### Creating a VPC, App and DB on Terraform!
+
+```
+# Define the provider and region
+provider "aws" {
+  region = "eu-west-1"
+}
+
+# Defines the VPC (Virtual Private Cloud)
+resource "aws_vpc" "tech230_jaafar_tf_vpc" {
+  cidr_block       = var.cidr_block
+  instance_tenancy = "default"
+
+  # Assigns tags to the VPC for identification
+  tags = {
+    Name = "tech230_jaafar_vpc_tf"
+  }
+}
+
+# Creates an internet gateway and associates it with the VPC
+resource "aws_internet_gateway" "tech230_jaafar_tf_igw" {
+  vpc_id = aws_vpc.tech230_jaafar_tf_vpc.id
+
+  tags = {
+    Name = "tech230_jaafar_tf_igw"
+  }
+}
+
+# Creates a public subnet within the VPC
+resource "aws_subnet" "tech230_jaafar_tf_vpc_publicSN" {
+  vpc_id                  = aws_vpc.tech230_jaafar_tf_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = var.avail_zone
+
+  # Assigns tags to the subnet for identification
+  tags = {
+    Name = "tech230_jaafar_tf_vpc_publicSN"
+  }
+}
+
+# Creates a route table associated with the VPC
+resource "aws_route_table" "tech230_jaafar_tf_rt" {
+  vpc_id = aws_vpc.tech230_jaafar_tf_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.tech230_jaafar_tf_igw.id
+  }
+
+  tags = {
+    Name = "tech230_jaafar_tf_route_table"
+  }
+}
+
+# Configures a security group for the app EC2 instance
+resource "aws_security_group" "tech230_jaafar_sg_tf_app" {
+  name        = "tech230_jaafar_tf_sg_app"
+  description = "Allow inbound traffic"
+  vpc_id      = aws_vpc.tech230_jaafar_tf_vpc.id
+
+  # Ingress rules to allow inbound traffic on specific ports
+  ingress {
+    description    = "access to the app"
+    from_port      = 80
+    to_port        = 80
+    protocol       = "tcp"
+    cidr_blocks    = ["0.0.0.0/0"]
+  }
+
+  # Allows SSH access
+  ingress {
+    description    = "SSH access"
+    from_port      = 22
+    to_port        = 22
+    protocol       = "tcp"
+    cidr_blocks    = ["0.0.0.0/0"]
+  }
+
+  # Allows port 3000 from anywhere
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allows all outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Assigns tags to the security group for identification
+  tags = {
+    Name = "tech230_jaafar_tf_sg_app"
+  }
+}
+
+# Creates an internet gateway and associates it with the VPC
+resource "aws_route_table_association" "tech230_jaafar_tf_subnet_association" {
+  route_table_id = aws_route_table.tech230_jaafar_tf_rt.id
+  subnet_id      = aws_subnet.tech230_jaafar_tf_vpc_publicSN.id
+}
+
+# Creates a private subnet within the VPC
+resource "aws_subnet" "tech230_jaafar_tf_vpc_privateSN" {
+  vpc_id                  = aws_vpc.tech230_jaafar_tf_vpc.id
+  cidr_block              = "10.0.3.0/24"
+  map_public_ip_on_launch = false
+  availability_zone       = var.avail_zone
+
+  # Assigns tags to the subnet for identification
+  tags = {
+    Name = "tech230_jaafar_tf_vpc_privateSN"
+  }
+}
+
+# Associates the private subnet with the automatically created private route table
+resource "aws_route_table_association" "tech230_jaafar_tf_private_subnet_association" {
+  route_table_id = aws_vpc.tech230_jaafar_tf_vpc.default_route_table_id
+  subnet_id      = aws_subnet.tech230_jaafar_tf_vpc_privateSN.id
+}
+
+# Launches the database EC2 instance
+resource "aws_instance" "db_instance" {
+  ami                          = "ami-05a23d8a795c322e5"
+  instance_type                = "t2.micro"
+  associate_public_ip_address  = false
+  subnet_id                    = aws_subnet.tech230_jaafar_tf_vpc_privateSN.id
+  key_name                     = var.key_pair_name
+
+  tags = {
+    Name = "tech230-jaafar-terraform-db"
+  }
+}
+
+# Delay after database instance creation
+resource "null_resource" "delay" {
+  depends_on = [aws_instance.db_instance]
+
+  provisioner "local-exec" {
+    command = "sleep 60"
+  }
+}
+
+# Launches the app EC2 instance with a delay after the database instance
+resource "aws_instance" "app_instance" {
+  depends_on = [null_resource.delay]
+
+  ami                          = var.app_ami_id
+  instance_type                = var.machine_type
+  associate_public_ip_address  = true
+  subnet_id                    = aws_subnet.tech230_jaafar_tf_vpc_publicSN.id
+  key_name                     = var.key_pair_name
+  vpc_security_group_ids       = [aws_security_group.tech230_jaafar_sg_tf_app.id]
+
+  user_data = <<-EOF
+    #!/bin/bash
+
+    sudo apt-get update -y && sudo apt-get upgrade -y
+
+    sudo apt-get install nginx -y
+
+    sudo sed -i "s/try_files \$uri \$uri\/ =404;/proxy_pass http:\/\/localhost:3000\/;/" /etc/nginx/sites-available/default
+
+    sudo sed -i "s/# pass PHP scripts to FastCGI server/location \/posts {\n\t\tproxy_pass http:\/\/localhost:3000\/posts;\n\t}/" /etc/nginx/sites-available/default
+
+    sudo systemctl restart nginx && sudo systemctl enable nginx
+
+    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+
+    sudo apt-get install nodejs -y
+
+    sudo npm install pm2 -g
+
+    export DB_HOST=mongodb://10.0.3.10:27017/posts
+
+    git clone https://github.com/JMerhi01/app.git /home/ubuntu/app
+
+    cd /home/ubuntu/app
+
+    sudo npm install
+
+    node seeds/seed.js
+
+    pm2 start app.js --update-env
+
+    pm2 restart app.js --update-env
+  EOF
+
+  tags = {
+    Name = "tech230-jaafar-terraform-app"
+  }
+}
+```
+- Note: So far /seeds isn't working, may need to change the db ami. 
