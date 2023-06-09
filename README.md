@@ -2343,6 +2343,35 @@ resource "aws_security_group" "tech230_jaafar_sg_tf_app" {
   }
 }
 
+# Configures a security group for the database EC2 instance
+resource "aws_security_group" "tech230_jaafar_sg_tf_db" {
+  name        = "tech230_jaafar_tf_sg_db"
+  description = "Allow inbound traffic for MongoDB"
+  vpc_id      = aws_vpc.tech230_jaafar_tf_vpc.id
+
+  # Allows inbound traffic on port 27017 from anywhere
+  ingress {
+    description    = "MongoDB inbound"
+    from_port      = 27017
+    to_port        = 27017
+    protocol       = "tcp"
+    cidr_blocks    = ["0.0.0.0/0"]
+  }
+
+  # Allows all outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Assigns tags to the security group for identification
+  tags = {
+    Name = "tech230_jaafar_tf_sg_db"
+  }
+}
+
 # Creates an internet gateway and associates it with the VPC
 resource "aws_route_table_association" "tech230_jaafar_tf_subnet_association" {
   route_table_id = aws_route_table.tech230_jaafar_tf_rt.id
@@ -2370,11 +2399,13 @@ resource "aws_route_table_association" "tech230_jaafar_tf_private_subnet_associa
 
 # Launches the database EC2 instance
 resource "aws_instance" "db_instance" {
-  ami                          = "ami-05a23d8a795c322e5"
+  ami                          = "ami-0700f463e5d18fd15"
   instance_type                = "t2.micro"
   associate_public_ip_address  = false
   subnet_id                    = aws_subnet.tech230_jaafar_tf_vpc_privateSN.id
+  private_ip                   = "10.0.3.10"
   key_name                     = var.key_pair_name
+  vpc_security_group_ids       = [aws_security_group.tech230_jaafar_sg_tf_db.id]
 
   tags = {
     Name = "tech230-jaafar-terraform-db"
@@ -2440,4 +2471,3 @@ resource "aws_instance" "app_instance" {
   }
 }
 ```
-- Note: So far /seeds isn't working, may need to change the db ami. 
