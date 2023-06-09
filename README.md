@@ -2476,9 +2476,16 @@ resource "aws_instance" "app_instance" {
 You make a file named `outputs.tf` and use commands to bring back the IP of the App, this means you NEVER need to even access AWS. 
 ```
 # Outputs
-# --------
 # Show EC2 App Instance Public IPv4 Address
+
+output "app_instance_public_ip" {
+  value = aws_instance.app_instance.public_ip
+}
 
 
 # Show EC2 DB Instance Private IPV4 Address
+
+output "db_instance_private_ip" {
+  value = aws_instance.db_instance.private_ip
+}
 ```
