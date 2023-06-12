@@ -77,8 +77,10 @@
     - [Creating a VPC using Terraform!](#creating-a-vpc-using-terraform)
     - [Creating a VPC, App and DB on Terraform!](#creating-a-vpc-app-and-db-on-terraform)
     - [Applying Outputs on Terraform](#applying-outputs-on-terraform)
-- [Microservices]
-  - [Docker]
+- [Microservices](#microservices)
+  - [Docker](#microservices)
+    - [Docker Installation](#docker-installation)
+    - [Docker Commands](#docker-commands)
 
 
 # DevOps Fundamentals
