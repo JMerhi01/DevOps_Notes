@@ -76,6 +76,9 @@
     - [Codify using Terraform](#codify-using-terraform)
     - [Creating a VPC using Terraform!](#creating-a-vpc-using-terraform)
     - [Creating a VPC, App and DB on Terraform!](#creating-a-vpc-app-and-db-on-terraform)
+    - [Applying Outputs on Terraform](#applying-outputs-on-terraform)
+- [Microservices]
+  - [Docker]
 
 
 # DevOps Fundamentals
@@ -2471,6 +2474,9 @@ resource "aws_instance" "app_instance" {
   }
 }
 ```
+
+![Alt text](<terraform WIN.PNG>)
+
 #
 ### Applying Outputs on Terraform
 You make a file named `outputs.tf` and use commands to bring back the IP of the App, this means you NEVER need to even access AWS. 
@@ -2489,3 +2495,82 @@ output "db_instance_private_ip" {
   value = aws_instance.db_instance.private_ip
 }
 ```
+# Microservices
+
+Microservices architecture is an architectural style that structures an application as a collection of small, loosely coupled services, each running in its own process and communicating with lightweight mechanisms. Here's a brief description and some common use cases:
+
+Description:
+
+- Microservices architecture breaks down an application into small, independent services that run in separate processes and communicate through APIs.
+- Each microservice focuses on specific business capabilities and can be developed, deployed, and scaled independently.
+
+Use Cases:
+
+- Large and Complex Systems: Microservices are suitable for large applications with complex requirements, allowing independent development and scalability of different parts.
+- Agile Development: Microservices align with agile methodologies, enabling faster development cycles and independent deployment of services.
+
+Who is using it in the industry?
+
+- Industry leaders like Netflix, Amazon, and Uber have adopted microservices architecture.
+- Many tech companies, including Spotify, Airbnb, and eBay, have implemented microservices for their scalable and agile systems.
+
+Why should we use it?
+
+- Enables scalability, agility, and independent development of services.
+- Facilitates faster time to market, supports continuous delivery, and allows for technology diversity within the system.
+
+When not to use it?
+
+- Small and simple applications with limited requirements.
+- Organizations without sufficient resources, expertise, or infrastructure to manage the complexities of distributed systems.
+
+Differences in architecture: 
+- Microservices Architecture: Decomposes an application into small, independent services.
+- Monolith: Single, self-contained application with tightly coupled components.
+- 2-Tier: Traditional architecture with client and server layers, often used for simple applications with limited scalability requirements.
+
+#
+## Docker
+
+![Alt text](docker.png)
+
+Docker is an open-source platform that enables developers to automate the deployment and management of applications within lightweight, isolated containers.
+
+Use Cases for Docker:
+
+- Containerization: Packaging and deploying applications with all dependencies, ensuring consistency across different environments.
+- Microservices: Orchestrating and scaling individual services within a microservices architecture.
+- Continuous Integration/Delivery: Streamlining the software development lifecycle with efficient testing, integration, and deployment processes.
+- Hybrid and Multi-Cloud Deployments: Facilitating portability and flexibility in deploying applications across diverse cloud and on-premises environments.
+
+[label](<containers vs vms.jfif>)
+
+### Docker Installation: 
+
+1. Download and Install Docker
+- https://www.docker.com/products/docker-desktop/
+
+2. Install Windows Subsystem for Linux if needed
+- `wsl --update` in a windows powershell as administrator. 
+
+3. Check installation
+- `docker --version` in to a git bash terminal as administrator
+
+### Docker Commands: 
+
+- `docker build -t <username>/<repo-name> .`: Build an image from a Dockerfile.
+- `docker run -p`: Run a container and connect to a specific port.
+- `docker ps`: Show running containers.
+- `docker stop <container-id>`: Stop a container.
+- `docker start <container-id>`: Start an existing container.
+- `docker rm <container-id>`: Remove an existing container.
+- `docker images`: List installed images.
+- `docker pull`: Pull an image from DockerHub.
+- `docker push <username>/<repo-name>:<tag-name>`: Push to DockerHub.
+- `docker logs <container-id>`: Show container logs in detached mode.
+- `docker exec -it <container-id> sh`: SSH into a container.
+- `docker cp <file.name> <containerid>:<path>/<file.name>`: Copy a file into a container.
+- `docker commit <container-id> <username>/<name>:<tag>`: Commit a new version.
+- `docker rmi -f <image-name>`: Remove an image forcefully.
+- `alias docker="winpty docker"`: Fix Windows bug for Docker language.
+
