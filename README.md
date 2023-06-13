@@ -81,7 +81,8 @@
   - [Docker](#microservices)
     - [Docker Installation](#docker-installation)
     - [Docker Commands](#docker-commands)
-
+    - [Docker Database](#docker-database)
+    - [Docker Application](#docker-application)
 
 # DevOps Fundamentals
 ## What is Devops?
@@ -2506,10 +2507,6 @@ Description:
 - Microservices architecture breaks down an application into small, independent services that run in separate processes and communicate through APIs.
 - Each microservice focuses on specific business capabilities and can be developed, deployed, and scaled independently.
 
-Use Cases:
-
-- Large and Complex Systems: Microservices are suitable for large applications with complex requirements, allowing independent development and scalability of different parts.
-- Agile Development: Microservices align with agile methodologies, enabling faster development cycles and independent deployment of services.
 
 Who is using it in the industry?
 
@@ -2520,6 +2517,11 @@ Why should we use it?
 
 - Enables scalability, agility, and independent development of services.
 - Facilitates faster time to market, supports continuous delivery, and allows for technology diversity within the system.
+
+When to use it?:
+
+- Large and Complex Systems: Microservices are suitable for large applications with complex requirements, allowing independent development and scalability of different parts.
+- Agile Development: Microservices align with agile methodologies, enabling faster development cycles and independent deployment of services.
 
 When not to use it?
 
@@ -2575,4 +2577,159 @@ Use Cases for Docker:
 - `docker commit <container-id> <username>/<name>:<tag>`: Commit a new version.
 - `docker rmi -f <image-name>`: Remove an image forcefully.
 - `alias docker="winpty docker"`: Fix Windows bug for Docker language.
+- `docker run hello-world` to test docker connection to api
 
+
+### Docker, Manual profile
+
+1. Run the Nginx image:
+   - Run the command: `docker run -d -p 8080:80 nginx`
+
+2. Access the container's shell:
+   - Find the container ID using the command: `docker ps`
+   - Run the command: `docker exec -it <containerid> sh`
+
+3. Fix the error related to the Docker command:
+   - Run the command: `alias docker="winpty docker"`
+
+4. Inside the container:
+   - Update package lists: `apt update -y`
+   - Navigate to the appropriate directory: `cd /usr/share/nginx/html`
+   - Install the nano text editor (if needed): `sudo apt install nano`
+   - Edit the `index.html` file using nano: `sudo nano index.html`
+     - Add or modify the content as desired.
+
+5. Exit the container's shell.
+
+6. Run the customized Nginx image:
+   - Run the command: `docker run -d -p 8080:80 ahskhan/tech221-nginx:v1`
+     - Replace `ahskhan/tech221-nginx:v1` with your desired name/repo.
+
+### Docker, Automatic profile
+
+1. Create a folder for Docker files and add necessary files:
+- Create a folder for Docker files.
+- Inside the folder, create an `index.html` file with the desired content.
+- Create a `Dockerfile` with the following content:
+```
+# Ensure official immage
+FROM nginx:latest
+
+# Label it
+LABEL MAINTAINER=JMERHI@SPARTA
+
+# Copy data index.html
+COPY index.html /usr/share/nginx/html/index.html
+
+# Required port expoxed 8080 or 80 depending
+EXPOSE 8080
+
+# Launch the app/server
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+2. Build the Docker image locally:
+- Open a terminal or command prompt.
+- Navigate to the Docker folder using `cd`.
+- Build the Docker image using the command: `docker build -t jm-profile .`
+
+3. Check the Docker images:
+- Run the command: `docker images`
+
+4. Tag the image with your Docker Hub repository name:
+- Run the command: `docker tag jm-profile:latest jmerhi/jm-profile:latest`
+
+5. Log in to Docker Hub (if required):
+- Run the command: `docker login`
+
+6. Push the image to Docker Hub:
+- Run the command: `docker push jmerhi/jm-profile:latest` :latest is the version name
+
+7. Run the container using the image from Docker Hub:
+- `docker run -d --name <name-the-container> -p 80:80 <image_name>` 
+- Run the command: `docker run -d -p 8080:80 jmerhi/jm-profile:latest`
+- `docker rm <id> to delete`
+
+Practice for the app:
+1. Create the docker file and move the app folder
+```
+FROM node:latest
+WORKDIR /usr/src/app
+COPY /app /usr/src/app/
+CMD ["node", "app.js"]
+```
+
+2. Build the Docker image locally:
+- docker build -t jm-app-practice .
+
+3. Tag the image with your Docker Hub repository name:
+- docker tag jm-app-practice:latest jmerhi/jm-app-practice:latest
+
+4. Push the image to Docker Hub:
+- docker push jmerhi/jm-app-practice
+
+5. Run the container using the image from Docker Hub:
+- docker run -d -p 3000:3000 jmerhi/jm-app-practice:latest
+
+
+### Docker Application
+
+```
+ROM node:latest as APP
+
+WORKDIR /usr/src/app/
+
+COPY app /usr/src/app/
+
+RUN npm install
+
+FROM node:alpine
+
+COPY --from=APP /usr/src/app/ /usr/src/app
+
+WORKDIR /usr/src/app/
+
+EXPOSE 3000
+
+CMD node seeds/seed.js && npm start
+```
+
+2. Build the Docker image locally:
+- docker build -t jm-app .
+
+3. Tag the image with your Docker Hub repository name:
+- docker tag jm-app:latest jmerhi/jm-app:latest
+
+4. Push the image to Docker Hub:
+- docker push jmerhi/jm-app
+
+5. Run the container using the image from Docker Hub:
+- docker run -d -p 3000:3000 jmerhi/jm-app:latest
+
+![Alt text](image.png)
+
+### Docker Database
+
+```
+FROM mongo:latest
+
+WORKDIR /usr/src/db/
+
+COPY ./mongod.conf /etc/
+
+EXPOSE 27017
+
+CMD ["mongod"]
+```
+
+2. Build the Docker image locally:
+- docker build -t jm-db .
+
+3. Tag the image with your Docker Hub repository name:
+- docker tag jm-db:latest jmerhi/jm-db:latest
+
+4. Push the image to Docker Hub:
+- docker push jmerhi/jm-db
+
+5. Run the container using the image from Docker Hub:
+- docker run -d -p 27017:27017 jmerhi/jm-db:latest
