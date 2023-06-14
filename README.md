@@ -97,6 +97,7 @@
     - [Docker Commands](#docker-commands)
     - [Docker Database](#docker-database)
     - [Docker Application](#docker-application)
+    - [Docker Compose with Reverse Proxy](#docker-compose-with-reverse-proxy)
     - [Security With Docker](#security-with-docker)
     - [Volumes](#volumes)
     - [APIs for Containers](#apis-for-containers)
@@ -2842,7 +2843,7 @@ CMD ["mongod"]
 - docker run -d -p 27017:27017 jmerhi/jm-db:latest
 
 #
-### Docker Compose
+### Docker Compose with Reverse Proxy
 
 This docker-compose configuration defines two services. The "db" service pulls the image "jmerhi/jm-db:V2" for MongoDB, exposes port 27017, and mounts the local "mongod.conf" file to the container. The "app" service pulls the "jmerhi/jm-app:latest" image, restarts always, exposes port 3000, sets the environment variable "DB_HOST" to connect to the MongoDB container, and specifies that it depends on the "db" service.
 
@@ -2853,8 +2854,6 @@ services:
     image: jmerhi/jm-db:V2
     ports:
       - "27017:27017"
-    volumes:
-      - D:\Documents\tech_230\tech230_docker\mongod.conf:/etc/mongod.conf
   app:
     image: jmerhi/jm-app:latest
     restart: always
@@ -2864,7 +2863,32 @@ services:
       - DB_HOST=mongodb://db:27017/posts
     depends_on:
       - db
+  nginx:
+    image: nginx
+    container_name: nginx-reverse-proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-reverse-proxy/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - jm-app
 ```
+
+With config.file for reverse proxy:
+
+```
+server {
+    listen 80;
+    location / {
+        proxy_pass http://jm-app:3000;
+    }
+}
+```
+
+Commit the changes as a new version: `docker commit <container-id> <name of image you want>`
+
+Push the changes as a new version: `docker push`
 
 
 #
