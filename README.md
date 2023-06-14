@@ -5,6 +5,14 @@
   - [The Software Development Life Cycle (SDLC):](#the-software-development-life-cycle-sdlc)
   - [Four Pillars of DevOps](#four-pillars-of-devops)
   - [Development Architecture](#development-architecture)
+  - [Agile and Scrum](#agile-and-scrum)
+  - [Scrum](#scrum)
+    - [Scrum Framework](#scrum-framework)
+    - [Three Pillars of Scrum](#three-pillars-of-scrum)
+    - [Scrum Roles](#scrum-roles)
+    - [Requirements Gathering](#requirements-gathering)
+    - [User Stories](#user-stories) 
+  ---
 - [Git and Github](#git-and-github)
   - [Git Setup](#git-setup)
     - [Creating a Git Repo](#creating-a-git-repo)
@@ -12,6 +20,7 @@
     - [Copying Github Repo to Local](#copying-github-repo-to-local)
   - [Git Commands](#git-commands)
   - [SSH](#ssh)
+  ---
 - [Virtualisation](#virtualisation)
   - [Kernel vs Shell](#kernel-vs-shell)
   - [Virtual Machines](#virtual-machines)
@@ -30,10 +39,12 @@
     - [Finding Dependencies with Ruby](#finding-dependencies-with-ruby)
     - [NodeJS and NPM in the APP VM](#nodejs-and-npm-in-the-app-vm)
     - [Mongo DB](#mongo-db)
+  ---
 - [Cloud Computing](#cloud-computing)
   - [IaaS, PaaS, and SaaS](#iaas-paas-and-saas)
   - [Public Cloud, Hybrid Cloud and Private Cloud](#public-cloud-hybrid-cloud-and-private-cloud)
   - [(OpEx) and (CapEx)](#opex-and-capex)
+  ---
 - [AWS (Amazon Web Services)](#aws-amazon-web-services)
   - [EC2](#ec2)
     - [Making an instance](#making-an-instance)
@@ -56,6 +67,7 @@
   - [Amazon CloudWatch](#amazon-cloudwatch)
     - [CloudWatch Dashboard](#cloudwatch-dashboard)
     - [CloudWatch Alarm](#cloudwatch-alarm)
+  ---
 - [CICD/CDE Pipeline](#cicdcde-pipeline)
   - [Jenkins](#jenkins)
     - [Creating a Jenkins Server](#creating-a-jenkins-server)
@@ -66,6 +78,7 @@
     - [Setting up a webhook](#setting-up-a-webhook)
     - [Pipeline](#pipeline)
     - [Creating a pipeline](#creating-a-pipeline)
+  ---
 - [Infrastructure as Code (IaC)](#infrastructure-as-code-iac)
   - [Ansible](#ansible)
     - [Automating Infrastructure Locally](#automating-infrastructure-locally)
@@ -77,12 +90,19 @@
     - [Creating a VPC using Terraform!](#creating-a-vpc-using-terraform)
     - [Creating a VPC, App and DB on Terraform!](#creating-a-vpc-app-and-db-on-terraform)
     - [Applying Outputs on Terraform](#applying-outputs-on-terraform)
+  ---
 - [Microservices](#microservices)
   - [Docker](#microservices)
     - [Docker Installation](#docker-installation)
     - [Docker Commands](#docker-commands)
     - [Docker Database](#docker-database)
     - [Docker Application](#docker-application)
+    - [Security With Docker](#security-with-docker)
+    - [Volumes](#volumes)
+    - [APIs for Containers](#apis-for-containers)
+    - [Container Lifecycle](#container-lifecycle)
+    - [Networking](#networking)
+  - [Kubernetes (K8)](#kubernetes-k8)
 
 # DevOps Fundamentals
 ## What is Devops?
@@ -156,6 +176,88 @@ DevOps emphasizes communication, collaboration, integration, automation, and tra
 - Collection of small, independent services that work together and communicate via APIs
 
 ![Alt text](Images/architecture.png)
+#
+## Agile and Scrum
+
+The Agile Manifesto, We value: 
+- Individuals and Interactions OVER Processes and Tools
+- Working Software OVER Comprehensive Documentation
+- Customer Collaboration OVER Contract Negotiation
+- Responding to Change OVER Following a Plan
+
+Agile is a methodology that can be implemented in to projects using varied frameworks (Kanban, Lean, XP, Crystal).
+
+#
+## Scrum
+
+Scrum is a framework that can be implemented in to projects for them to be considered Agile. 
+
+# 
+### Scrum Framework
+
+Product backlog which is a long list of project goals. 
+
+Sprint Planning to plan with the resources you have to make a Sprint backlog (the broken down goals for the project) 
+
+The Scrum Team which uses daily scrums (meetings where the team shares updates, challenges and blockers to coordinate work)
+
+In to a Sprint Review at the end of the day (Team demonstrates the completed work to stakeholders and gathers their feedback)
+
+Regardless if the product works or not, both ways, it moves on to Sprint Retrospective where the team can express feedback of how things went ready for the next phase of sprint planning.
+
+![Alt text](<Scrum Framework.png>)
+
+#
+### Three Pillars of Scrum
+![Alt text](<3 Pillars.png>)
+
+#
+### Scrum Roles
+![Alt text](<Scrum Roles.png>)
+
+#
+### Requirements Gathering
+
+For the Product Backlog:
+
+Important:
+- Documentation
+- Constant and Common communication as a team and stakeholders
+
+Methods to gather requirements: Interviews, surveys, feedback forms
+
+Defining goals and what is needed to achieve them
+What we need but not how we are going to achieve it.
+
+#
+### User Stories
+
+**For the Product Backlog:
+
+A promise of a conversation, a brain storm of ideas, what do we want, we’ll talk about it later.** 
+
+Do not include all the details, only a pointer to the real requirement (small notes and cards).
+Very simple as its used as a promise of a future conversation. 
+
+As a **<type of user>**, I want **<goal>** so that **<reason>.**
+As a **customer**, I want to be able to add items to my cart, so that I can save them for later.
+
+![Alt text](<user stories.png>)
+
+EPIC stories: A zoomed out story, less specificity and abstracted.
+Make an Epic Story first based on the Feature Identified, break it down in to User Stories. 
+
+Make sure that user stories:
+- Are Understandable
+- Follow the same format (I need or I want)
+- Are INVEST:
+Independent - Your OWN Value.
+Negotiable - Brings About Discussion.
+Valuable - Useful to the Project.
+Estimable - Dictating Time, Resources, Ball-park estimation. 
+Small - Boil it Down as Much as Possible. BASE CONCEPT. 
+Testable - Success can be Measured. 
+
 
 # Git and Github
 
@@ -2549,6 +2651,7 @@ Use Cases for Docker:
 
 [label](<containers vs vms.jfif>)
 
+#
 ### Docker Installation: 
 
 1. Download and Install Docker
@@ -2560,8 +2663,10 @@ Use Cases for Docker:
 3. Check installation
 - `docker --version` in to a git bash terminal as administrator
 
+#
 ### Docker Commands: 
 
+- `attach`: Attach local standard input, output, and error streams to a running container.
 - `docker build -t <username>/<repo-name> .`: Build an image from a Dockerfile.
 - `docker run -p`: Run a container and connect to a specific port.
 - `docker ps`: Show running containers.
@@ -2573,11 +2678,11 @@ Use Cases for Docker:
 - `docker push <username>/<repo-name>:<tag-name>`: Push to DockerHub.
 - `docker logs <container-id>`: Show container logs in detached mode.
 - `docker exec -it <container-id> sh`: SSH into a container.
-- `docker cp <file.name> <containerid>:<path>/<file.name>`: Copy a file into a container.
+- `docker cp <file.name> <container-id>:<path>/<file.name>`: Copy a file into a container.
 - `docker commit <container-id> <username>/<name>:<tag>`: Commit a new version.
 - `docker rmi -f <image-name>`: Remove an image forcefully.
 - `alias docker="winpty docker"`: Fix Windows bug for Docker language.
-- `docker run hello-world` to test docker connection to api
+- `docker run hello-world` to test Docker connection to API.
 
 
 ### Docker, Manual profile
@@ -2605,6 +2710,7 @@ Use Cases for Docker:
    - Run the command: `docker run -d -p 8080:80 ahskhan/tech221-nginx:v1`
      - Replace `ahskhan/tech221-nginx:v1` with your desired name/repo.
 
+#
 ### Docker, Automatic profile
 
 1. Create a folder for Docker files and add necessary files:
@@ -2671,7 +2777,7 @@ CMD ["node", "app.js"]
 5. Run the container using the image from Docker Hub:
 - docker run -d -p 3000:3000 jmerhi/jm-app-practice:latest
 
-
+#
 ### Docker Application
 
 ```
@@ -2708,6 +2814,7 @@ CMD node seeds/seed.js && npm start
 
 ![Alt text](image.png)
 
+#
 ### Docker Database
 
 ```
@@ -2733,3 +2840,81 @@ CMD ["mongod"]
 
 5. Run the container using the image from Docker Hub:
 - docker run -d -p 27017:27017 jmerhi/jm-db:latest
+
+#
+### Security with Docker
+
+1. You can implement rootless mode makes it so that Docker daemon and containers run as unprivilaged users which limits the attacks someone can make on the host. 
+
+2. Official images usually come maintained and with security patches 
+
+3. Docker has tools like Docker Security Scanning to find any vulnerabilities in container images so you can check before you deploy. 
+
+4. Docker Content Trust (DCT) works similarly to SSH as it is an authentication method that requires a private key on verified images and a public key to access. This image is "verified" because the publisher generates a digital signature using their private key. 
+
+5. CONTAINER NETWORKS! Work in similar ways to VPC as you can create virtualised network environments that seperate or isolate traffic while insuring containers can communicate. Container networks also allow management of IP addresses 
+
+#
+### Volumes
+
+Volumes are essentially storage for containers.
+
+- `docker volume`
+- `docker volume ls`
+
+So you can see the storage for your docker images, multiple can use one or each can have one.
+
+
+### APIs for Containers
+
+**Remind me what are APIs?**
+
+An API (Application Programming Interface) is like a set of rules that allow different software applications to talk to each other. It's a bit like a common language they use. 
+
+APIs use a protocol called HTTP (Hypertext Transfer Protocol) for communication. This protocol lets applications send and receive data over the internet. 
+
+With APIs, applications can make requests using methods like GET, POST, PUT, and DELETE. They can also exchange data in formats like JSON or XML. APIs help applications work together by following these rules and using HTTP to talk and share information.
+
+**How can the containers communicate?**
+
+1. Containers are connected to a network and assigned unique IP addresses and open ports.
+2. Containers expose API endpoints over HTTP or HTTPS protocols.
+3. One container acts as a client and makes API requests to another container acting as a server.
+4. The server container receives the request, processes it, and prepares a response.
+5. The response is sent back to the client container, allowing them to consume the data or outcome of the operation.
+
+#
+### Container Lifecycle
+
+When an image is made, it's essentially a compression, like a zip file. And when a container is made, the image is unzipped and the computing resources are simply shared with that container. 
+
+- Docker ps to see running containers
+
+- Docker stop <container ID>
+
+- Docker start <container ID>
+
+#
+### Networking
+
+Docker has a built in feature called container networking which allows you to build network infrastructure. Kubernetes does the same so why bother? 
+
+Dockers networking features can be used for smaller deployments but when dealing with large-scale deployment and complex architectures, Kubernetes provides a more scalable networking solution.
+
+#
+## Kubernetes (K8)
+
+Kubernetes is an open-source container orchestration platform that automates the deployment, scaling, and management of containerised applications. It was originally developed by Google and is now maintained by the Cloud Native Computing Foundation (CNCF), a community-driven organization.
+
+**Why use Kubernetes?**
+- Scalable and Automated: Kubernetes automates container deployment, scaling, and management, enabling efficient orchestration of applications at scale.
+- Service Discovery and Load Balancing: Built-in mechanisms simplify service discovery and load balancing, enhancing application accessibility and performance.
+- Portable and Extensible: Kubernetes is platform-agnostic, allowing easy deployment across various environments, and offers extensibility for integration with ecosystem tools.
+
+**Why not use Kubernetes?**
+
+- Simplicity and Small Scale: For simpler deployments or small-scale applications, Kubernetes may introduce unnecessary complexity and overhead.
+
+
+
+
