@@ -2842,6 +2842,32 @@ CMD ["mongod"]
 - docker run -d -p 27017:27017 jmerhi/jm-db:latest
 
 #
+### Docker Compose
+
+This docker-compose configuration defines two services. The "db" service pulls the image "jmerhi/jm-db:V2" for MongoDB, exposes port 27017, and mounts the local "mongod.conf" file to the container. The "app" service pulls the "jmerhi/jm-app:latest" image, restarts always, exposes port 3000, sets the environment variable "DB_HOST" to connect to the MongoDB container, and specifies that it depends on the "db" service.
+
+```
+version: "3.9"
+services:
+  db:
+    image: jmerhi/jm-db:V2
+    ports:
+      - "27017:27017"
+    volumes:
+      - D:\Documents\tech_230\tech230_docker\mongod.conf:/etc/mongod.conf
+  app:
+    image: jmerhi/jm-app:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=mongodb://db:27017/posts
+    depends_on:
+      - db
+```
+
+
+#
 ### Security with Docker
 
 1. You can implement rootless mode makes it so that Docker daemon and containers run as unprivilaged users which limits the attacks someone can make on the host. 
