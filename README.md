@@ -2650,8 +2650,8 @@ Use Cases for Docker:
 - Continuous Integration/Delivery: Streamlining the software development lifecycle with efficient testing, integration, and deployment processes.
 - Hybrid and Multi-Cloud Deployments: Facilitating portability and flexibility in deploying applications across diverse cloud and on-premises environments.
 
-[label](<containers vs vms.jfif>)
 
+[label](<containers vs vms-2.jfif>)
 #
 ### Docker Installation: 
 
@@ -2813,8 +2813,6 @@ CMD node seeds/seed.js && npm start
 5. Run the container using the image from Docker Hub:
 - docker run -d -p 3000:3000 jmerhi/jm-app:latest
 
-![Alt text](image.png)
-
 #
 ### Docker Database
 
@@ -2964,7 +2962,108 @@ Kubernetes is an open-source container orchestration platform that automates the
 **Why not use Kubernetes?**
 
 - Simplicity and Small Scale: For simpler deployments or small-scale applications, Kubernetes may introduce unnecessary complexity and overhead.
+#
+### K8 Clusters
 
+The K8 cluster is made up of the following: 
 
+- Workloads: The applications that Kubernetes runs are called workloads. A workload can be a single component or several discrete components working together. Within a K8s cluster, a workload is run across a group of pods.
+
+- Pods: Kubernetes pod is one or more containers that share storage and network resources. Pods within a Kubernetes cluster also include a spec that defines how to run the containers.
+
+- Nodes: These are the actual resources, like CPU and RAM, which workloads run on top of. The real-world source of these “hardware” resources can be a virtual machine, on-premises physical server, or cloud infrastructure.
+
+- Control plane: The control plane is what enables the abstraction that makes K8s so powerful. It is what ensures that the configurations you define for your cluster are automatically implemented. In addition to the kube-controller-manager that runs the cluster, the control plane includes components like kube-apiserver which exposes the K8s API and the kube-scheduler that monitors the health of your cluster and schedules the deployment of pods to nodes based on your configuration.
+
+Kubernetes runs your workload by placing containers in to pods to run on nodes. Each node is managed by the control plane. 
+
+#
+### K8 Objects
+
+- Objects are records of intent to describe the state you desire in kubernetes. 
+The most basic object is the pod, it's similar to a single or group of containers with shared networking and storage. 
+
+- Just like docker runs an image, kubernetes pod runs oen or more container images. 
+
+- **Services** is another object in Kubernetes and it functions as a way to expose the pods and the containers inside them to the network, either within the cluser or on the internet. Similar to publishing ports on docker using `-p 80:80` so the Service creates a stable network interface that forwards traffic to the correct Pod, even if the actual Pod instances change over time.
+
+- **Deployments** are another object that manage the desired state of your application. You can define the state of your application and Kubernetes will ensure that the actual state of the system matches the desired one. Deployments ensure a specified number of pod replicas are running but they don't automatically adjust the number of repilicas based on load or demand. 
+
+Deployments are more about maintaining the desired state of your application and handling updates in a controlled way. 
+#
+### Self-healing with K8
+
+Self-healing is one of the reasons for it's popularity. Kubernetes constantly monitors the state of your applications and infrastructure so when something goes wrong, Kubernetes can automatically take action to correct the problem. It does this byL 
+
+- Restarting failed Pods: Kubernetes automatically restarts Pods that crash due to errors.
+
+- Replaces and reschedule Pods: Unresponsive or failed Pods are replaced and rescheduled on healthy Nodes.
+
+- Replicates Pods to a desired state: Kubernetes maintains the specified number of Pod replicas, creating new ones as needed.
+
+- Checks node and application health: Kubernetes monitors the health of Nodes and applications, reallocating resources as necessary.
+
+- Autoscalling: Kubernetes adjusts the number of Pods based on load or custom metrics.
+
+#
+### Autoscaling with K8
+
+Kubernetes uses a feature called the **Horizontal Pod Autoscaler (HPA)** to implement auto-scaling. The HPA automatically scales the number of Pods in a deployment, replication controller, replica set, or stateful set based on observed CPU utilization or other select performance metrics.
+
+1. You create a Horizontal Pod Autoscaler that targets a specific deployment and define the CPU utilization threshold that should trigger scaling.
+2. The HPA monitors the CPU utilization of the Pods in that deployment. This monitoring is done by querying the resource metrics API for the relevant data.
+3. When the HPA sees that the CPU utilization has exceeded the defined threshold, it calculates the new desired number of Pods and adjusts the replica count of the deployment.
+4. The deployment then spins up or shuts down Pods to match the new desired count.
+
+Kubernetes also provides a **Vertical Pod Autoscaler (VPA)** that can adjust the CPU and memory requests for the containers in a Pod, and the Cluster Autoscaler, that adjusts the size of the Kubernetes cluster itself based on the needs of the workloads.
+#
+### K8 Deployment
+
+Absolutely, I'll provide a more concise guide with the relevant commands:
+
+1. **Containerize your Microservices**:
+   Build Docker images for your application and database, and push them to a repo:
+   ```bash
+   docker build -t jmerhi/jm-app:latest .
+   docker push jmerhi/jm-app:latest
+   
+   docker build -t jmerhi/jm-db:V2 .
+   docker push jmerhi/jm-db:V2
+   ```
+
+2. **Create Kubernetes Deployments**:
+   Define Deployments in YAML files for your application and database, then apply them:
+   ```bash
+   kubectl apply -f jm-app-deployment.yaml
+   kubectl apply -f jm-db-deployment.yaml
+   ```
+
+3. **Create Kubernetes Services**:
+   Define Services in YAML files for your application and database, then apply them:
+   ```bash
+   kubectl apply -f jm-app-service.yaml
+   kubectl apply -f jm-db-service.yaml
+   ```
+
+4. **Configure Networking**:
+   If you're using a reverse proxy, you'll need to define an Ingress. Apply the Ingress:
+   ```bash
+   kubectl apply -f jm-ingress.yaml
+   ```
+
+5. **Monitor and Scale**:
+   Use Kubernetes' built-in commands to monitor your applications:
+   ```bash
+   kubectl get pods
+   kubectl logs jm-app-pod
+   ```
+   If needed, scale your applications manually or define an autoscaler:
+   ```bash
+   kubectl scale deployment my-app --replicas=3
+   kubectl apply -f my-app-autoscaler.yaml
+   ```
+
+#
+Practical:
 
 
