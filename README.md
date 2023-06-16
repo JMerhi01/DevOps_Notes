@@ -3063,7 +3063,133 @@ Absolutely, I'll provide a more concise guide with the relevant commands:
    kubectl apply -f my-app-autoscaler.yaml
    ```
 
+Labels and selectors used to let microservices to connect to eachother. 
+
 #
 Practical:
 
+- `kubectl get serve` - check clusters
+- `kubectl get svc` - check services
+- `kubectl get pods` to check
+- `kubectl get deploy` to check
+- `kubectl get rs` to check replica set
+- `kubectl get deployment <name-deploy>`
+- `kubectl create -f nginx-deploy.yml` to create based on yml
+- `kubectl delete deployment --all`
+- `kubectl delete service --all`
+- `kubectl delete pod --all`
+- `kubectl delete persistentvolumeclaim mongo-db`
 
+We created the deployment, it's not up and running yet.
+
+Replica set has already been created for us
+
+We provided the label "nginx" connects them
+
+We need to create a service with the same label to have it exposed to the internet. 
+
+![Alt text](<k8 cluster.PNG>)
+
+I have a deployment that includes a replicaset. The replicaset ensures that there is always three pods running which was specified in the deployment. Each of these pods has a label assigned to them and this label is crucial because it allows the service to select and communicate with these pods. The service is provided with the port it must allow traffic through. 
+
+If something isn't working: 
+
+- `kubectl describe deploy <name>`
+
+- `kubectl describe svc <name>`
+
+App Deploy: 
+```
+---
+apiVersion: apps/v1 # which api call we need to make for k8 to make a deployment for us
+kind: Deployment #tool for running local Kubernetes clusters using Docker container “nodes”
+metadata: # metadata to name your deployment - case insensitive
+  name: node
+spec: # labels and selectors are communication services between micro-services
+  selector:
+    matchLabels:
+      app: node # look for this label to match with k8s service
+  
+  replicas: 3 # how many pods
+  template: # template to use it's label for k8s to launch in the browser
+    metadata:
+      labels:
+        app: node 
+    spec:
+      containers:
+        - name: node
+          image: jmerhi/jm-app:latest
+          ports: 
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: mongodb://mongo:27017/posts
+          imagePullPolicy: IfNotPresent    
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node
+spec:
+  selector:
+    app: node
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: LoadBalancer    
+```
+
+Mongo Deploy: 
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: jmerhi/jm-db:V2
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: storage
+              mountPath: /data/db
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: mongo-db # claims persistent volume
+# when restarting pod, all saved data is gone. Persistent Volume ensures that the saved data is still there even if pod is gone. New pod will read existing data from
+# that storage to get up to date data.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim # application has to claim persistent volume
+metadata:
+  name: mongo-db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
+```
