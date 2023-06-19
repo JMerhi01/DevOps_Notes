@@ -60,7 +60,11 @@ You need to understand what YOU are responsible for and what AWS is responsible 
 
 ![Alt text](Images/AWS%20Responsibility.PNG)
 
-# IAM
+# Cloud Security
+
+There are many ways to implement security on the cloud such as: IAM, AWS access keys and more.
+
+## IAM
 IAM = Idenity and Access Managment (Global service)
 
 **Root** users are created by default but shouldn't be used.
@@ -69,7 +73,7 @@ IAM = Idenity and Access Managment (Global service)
 
 ![Alt text](Images/AWS%20groups.PNG)
 #
-## IAM Permissions
+### IAM Permissions
 
 - Users or Groups can be assigned JSON documents called policies
 
@@ -78,7 +82,7 @@ IAM = Idenity and Access Managment (Global service)
 - Always apply the **Least privilege principle**: don't give more than a user needs. 
 
 #
-## IAM Creation
+### IAM Creation
 
 By navigating to the IAM tool, you can create users and groups. 
 
@@ -94,7 +98,7 @@ You can also email the login instructions to that user!
 
 ![Alt text](Images/AWS%20IAM%20Email.PNG)
 #
-## IAM Policies
+### IAM Policies
 
 The policy structure in JSON files:
 
@@ -108,7 +112,7 @@ These policies can be:
 
 You can also create your own policy! using either a JSON file or the visual editor. 
 #
-## IAM Security, Password Policy
+### IAM Security, Password Policy
 Password policies are one of the ways you can protect your IAMs:
 
 - Request strong passwords only
@@ -117,7 +121,7 @@ Password policies are one of the ways you can protect your IAMs:
 - Require password expiration
 - Prevent password re-use
 #
-## IAM Security, Multi Factor Authentication
+### IAM Security, Multi Factor Authentication
 
 MFA can be used to protect your root accounts and IAM users. 
 
@@ -133,5 +137,56 @@ MFA options:
 
 ![Alt text](Images/AWS%20IAM%20MFA%20options%202.PNG)
 
+#
+## AWS Access Keys, CLI and SDK
 
+There are three ways to access AWS: 
+
+- AWS managment console (Password + MFA)
+- AWS Command line interface (CLI) (Access Keys)
+- AWS Software Developer Kit (SDK) (Access Keys)
+
+Access keys are generated through the AWS Console and are managed by the user that owns them.
+
+![Alt text](<AWS Access Key Example.JPG>)
+
+#
+### AWS CLI
+
+AWS CLI is a tool you can use to interact with AWS services using commands in your command-line shell. 
+
+It gives you direct access to the public APIs of AWS services and you can develop script to manage resources. 
+
+Logging in: 
+- `aws configure`
+- `<Access Key>`
+- `<Secret Access Key>`
+- `<Region Name>`
+
+- `aws iam list-users` will give all users in my account
+#
+### AWS SDK
+
+SDK is the Software Development Kit, it is actually integrated within your application to access and manage AWS services programmatically while supporting a large variety of languages and libraries. 
+
+
+### AWS Cloudshell
+
+Cloudshell is a terminal in the cloud and it's free to use!
+
+You can use ACLI commands the same way! You have your own repository, you can create files and all files in this environment will stay. It can be configured and scaled. This means you can download or upload files to and from it. 
+
+
+### IAM roles for AWS services
+
+Some AWS services will need to take action on our behalf so:
+
+IAM roles are used to assign permissions to the services.
+
+IAM roles are similar to how users have policies.
+
+
+Summary:
+
+![Alt text](Images/AWS%20IAM%20SUMMARY.JPG)
 
