@@ -10,7 +10,9 @@ What is the Cloud Computing?
 #
 ## Cloud Deployment Models
 
-![Alt text](<AWS cloud models.PNG>)
+
+![Alt text](Images/AWS%20cloud%20models.PNG)
+
 #
 ## Cloud Characteristics
 
@@ -38,8 +40,7 @@ What is the Cloud Computing?
 - PaaS is like taking a taxi. You don’t drive a taxi yourself, but simply tell the driver where you need to go and relax in the back seat.
 
 - SaaS is like going by bus. Buses have assigned routes, and you share the ride with other passengers.
-
-![Alt text](<types of cloud.PNG>)
+![Alt text](Images/types%20of%20cloud.PNG)
 #
 ## AWS Region Selection
 
@@ -51,13 +52,13 @@ What is the Cloud Computing?
 
 **Pricing** - Pricing varies based on region. 
 
-![Alt text](<AWS services.PNG>)
+![Alt text](Images/AWS%20services.PNG)
 
 #
 ## AWS Responsibility
 You need to understand what YOU are responsible for and what AWS is responsible for.
 
-![Alt text](<AWS Responsibility.PNG>)
+![Alt text](Images/AWS%20Responsibility.PNG)
 
 # IAM
 IAM = Idenity and Access Managment (Global service)
@@ -66,7 +67,7 @@ IAM = Idenity and Access Managment (Global service)
 
 **Instead** create users for the organisation, these users can be grouped and provided permissions. 
 
-![Alt text](<AWS groups.PNG>)
+![Alt text](Images/AWS%20groups.PNG)
 #
 ## IAM Permissions
 
@@ -76,29 +77,28 @@ IAM = Idenity and Access Managment (Global service)
 
 - Always apply the **Least privilege principle**: don't give more than a user needs. 
 
-![Alt text](image.png)
 #
 ## IAM Creation
 
 By navigating to the IAM tool, you can create users and groups. 
 
 To create a user: 
-![Alt text](<AWS IAM creation.PNG>)
+![Alt text](Images/AWS%20IAM%20creation.PNG)
 
 To set permissions, it's best to create a group:
-![Alt text](<AWS IAM ADMIN.PNG>)
+![Alt text](Images/AWS%20IAM%20ADMIN.PNG)
 
 You can now add users to this group and they will inherit all attached policies.
 
 You can also email the login instructions to that user!
 
-![Alt text](<AWS IAM Email.PNG>)
+![Alt text](Images/AWS%20IAM%20Email.PNG)
 #
 ## IAM Policies
 
 The policy structure in JSON files:
 
-![Alt text](<AWS IAM Policies.PNG>)
+![Alt text](Images/AWS%20IAM%20Policies.PNG)
 
 These policies can be:
 
@@ -123,13 +123,13 @@ MFA can be used to protect your root accounts and IAM users.
 
 MFA combines the password you know AND security device you own. 
 
-![Alt text](<AWS IAM Security.PNG>)
+![Alt text](Images/AWS%20IAM%20Security.PNG)
 
 Even if the password is compromised, the account will not be compromised as the the physical device is required. 
 
 MFA options: 
 
-![Alt text](<AWS IAM MFA options 1.PNG>)
+![Alt text](Images/AWS%20IAM%20MFA%20options%201.PNG)
 
-![Alt text](<AWS IAM MFA options 2.PNG>)
+![Alt text](Images/AWS%20IAM%20MFA%20options%202.PNG)
 
