@@ -2581,7 +2581,7 @@ resource "aws_instance" "app_instance" {
 }
 ```
 
-![Alt text](<terraform WIN.PNG>)
+![Alt text](Images/terraform%20WIN.PNG)
 
 #
 ### Applying Outputs on Terraform
@@ -2639,7 +2639,7 @@ Differences in architecture:
 #
 ## Docker
 
-![Alt text](docker.png)
+![Alt text](Images/docker.png)
 
 Docker is an open-source platform that enables developers to automate the deployment and management of applications within lightweight, isolated containers.
 
@@ -2651,7 +2651,7 @@ Use Cases for Docker:
 - Hybrid and Multi-Cloud Deployments: Facilitating portability and flexibility in deploying applications across diverse cloud and on-premises environments.
 
 
-[label](<containers vs vms-2.jfif>)
+![Alt text](Images/containers%20vs%20vms.jfif)
 #
 ### Docker Installation: 
 
@@ -3088,7 +3088,7 @@ We provided the label "nginx" connects them
 
 We need to create a service with the same label to have it exposed to the internet. 
 
-![Alt text](<k8 cluster.PNG>)
+![Alt text](Images/k8%20cluster.PNG)
 
 I have a deployment that includes a replicaset. The replicaset ensures that there is always three pods running which was specified in the deployment. Each of these pods has a label assigned to them and this label is crucial because it allows the service to select and communicate with these pods. The service is provided with the port it must allow traffic through. 
 
