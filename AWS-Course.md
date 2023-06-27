@@ -190,3 +190,132 @@ Summary:
 
 ![Alt text](Images/AWS%20IAM%20SUMMARY.JPG)
 
+
+# AWS EC2
+Elastic Compute Cloud = Infrastructure as a service
+
+Allows you to: 
+- Rent virtual machines
+- store data on vitual drives
+- distribute load using elastic load balancers. 
+- scale the services using an auto scaling group
+
+You can configure: 
+
+- OS, operating system, Linux, Windows, Mac and more. 
+
+- How much computing power? CPU
+- How much random-access memory? Ram
+- Storage space, Network attached (EBS and EFS) or Hardware (EC2 instance store)
+- Network card, speed of the card and public ip address
+- Firewall rules: Security Groups
+- Bootstrap script: EC2 User Data
+
+User data: bootstrapping means launch commands when machine starts, it's only run once on it's first start. It's used to automate boot tasks such as installing updates, software, downloading files and more. IT WILL RUN AS ROOT USER. 
+
+EC2 types: 
+![Alt text](Images/aws%20ec2%20types.JPG)
+
+### Budget Setup
+
+You can create4 budgets using templates with a time-scale of your choosing. 
+
+You can select for example $10 per month with email alerts. 
+
+### EC2 types
+
+If you had a type named m5.2xlarge
+m = instance class
+5 = generation
+2xlarge = size within the instance class. 
+
+You have general purpose insatnce types which have a good balance between computing, memory and networking. 
+
+You have compute Optimised instance types which provide high performance processors. e.g gaming servers, machine learning and more. 
+
+You have memory optimised instance types for large data sense requiring memory (RAM)
+
+You haqve storage optimised instances which are great for storage intensive tasks that require high read and right access to large data sets. (Databases)
+
+### Security Groups
+
+Security groups allow you to control how traffic is allowed in to or out of our EC2 instances. 
+
+Secury groups only contain ALLOW rules and can reference by IP. 
+
+They regulate access to ports, autorised IP ranges and inbound/outbound network.
+
+Good to note: 
+- Security groups can be attached to multiple instances but are locked down to a region or VPC. 
+- Security groups live "outside" of the EC2. 
+- All inbound traffic is blocked by default and all outbound traffic is authorised by default. 
+
+Ports: 22 = ssh, 21 = FTP, 22 = SFTP, 80 = HTTP, 443 = HTTPS, 3389 = RDP. 
+
+### SSH
+
+Secure Shell Connection, manual setup.
+
+When using SSH, we create a `public key` and a `private key`
+
+The Public Key is the Lock
+
+The Private Key is the Key
+
+- SSH is used for Mac, Linux and Windows 10 and under. 
+- Putty is used for Windows 10 and later. 
+- EC2 Instance Connect allows for all OS. 
+
+### EC2 Purchasing Options
+
+On demand instances
+- Pay for what you use, billed per second or per hour, recommended for short term and uninterrupted work load. 
+
+EC2 reserved instances
+- 72% discount because you reserve a period of time, pay upfront and set the instance scope for even MORE discount. 
+
+EC2 Savings Plan
+- Discount based on long-term usage
+- Commit to a certain type of usage for a long time
+
+
+EC2 Spot Instances
+- Can get up to a 90% discount and very cost efficient.
+- Instances that you can "lose" at any point of time if your max price is less than the current spot price. 
+- Useful for workloads that are resilient to failure.
+
+EC2 Dedicated Hosts
+- A physical server with EC2 instance capacity fully dedicated to your use
+- Allows you to address compiance requirements and use your existing server-bound software licenses. 
+- You can do either on demand or reserved. Very expensive compared to others. 
+
+EC2 Dedicated Instances
+- Instances run on hardware dedicated to you, may share hardware with other instances in the same account but you have no control over instance placement. 
+
+Just remember that dedicated instances mean you have your own instance on your own hardware whereas dedicated host you get access to a physical server itself.
+
+![Alt text](Images/aws%20ec2%20purchase.JPG)
+
+### EC2 Shared Responsibility
+
+![Alt text](Images/aws%20ec2%20responsibility.JPG)
+
+### EC2 Exam Prep
+
+![Alt text](Images/aws%20ec2%20exam.JPG)
+
+## AWS EC2 Storage
+
+
+
+### EBS Volumes
+
+EBS volumes - Elastic Block Store, a network drive you can attach to your instances while they run, allows instances to persist data. One instance at a time and one availability zone. "Network USB sticks"
+
+They can be detached and attached to another instance fast. Price scalable. 
+
+### EBS Snapshots
+
+You can take snapshots of your EBS volume at any point, this snapshot can be taken while the volume is running and the snapshots can be copied accross regions. 
+
+Snapshots can be moved to an archive where they are cheaper but it takes 24-72 hours to restore the archive.
