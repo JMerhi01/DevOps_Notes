@@ -316,8 +316,9 @@ All files or folders stated in the above file will be excluded by git.
 2. Create an empty repo on Github
 3. Copy the Github repo link e.g `https://github.com/JMerhi01/GitFundamentals.git`
 4. In gitbash, use `git remote add origin <githublink>`
-5. `add` and `commit` the files you would like to push
-6. Use `git push origin main` to push files to github
+5. `git add <filename> or git add .` and `git commit -m "description"` the files you would like to push
+6. `git tag "V1.0"` (optional)
+7. Use `git push origin main` and add `--tags` if needed, to push files to github
 
 When pushing, you will either need to log-in or insert a token for access.
 
